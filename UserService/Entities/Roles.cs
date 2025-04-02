@@ -1,6 +1,6 @@
 ﻿namespace UserService.Model
 {
-    public class User
+    public class Roles
     {
     }
 }

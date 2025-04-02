@@ -1,6 +1,5 @@
-﻿namespace UserService.Services
+﻿namespace UserService.Services;
+public class UserService
 {
-    public class UserService
-    {
-    }
+
 }

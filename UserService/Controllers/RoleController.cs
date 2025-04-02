@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace UserService.Controllers
 {
-    [Route("api/users")]
+    [Route("api/roles")]
     [ApiController]
     public class RoleController : ControllerBase
     {

@@ -1,4 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using TaskService.Data;
+using TaskService.Configurations;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 
