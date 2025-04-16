@@ -10,5 +10,5 @@ public class UserDto
     public DateTime CreatedAt { get; set; }
     public int RoleId { get; set; }
 
-    public Roles Role { get; set; } = null!;
+    public ICollection<Roles?> Roles { get; set; } = new List<Roles?>();
 }

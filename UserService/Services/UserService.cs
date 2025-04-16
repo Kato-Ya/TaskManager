@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using UserService.Data;
 using UserService.Dto;
 using UserService.Entities;
-using UserService.UserSpecifications;
+using UserService.Specifications.UserSpecifications;
 using Ardalis.Specification;
 using System.Threading.Tasks;
 

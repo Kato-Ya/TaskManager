@@ -12,7 +12,7 @@ public class Users
         PasswordHash = dto.PasswordHash;
         CreatedAt = dto.CreatedAt;
         RoleId = dto.RoleId;
-        Role = dto.Role;
+        Roles = dto.Roles;
 
     }
     public int Id { get; set; }
@@ -22,5 +22,5 @@ public class Users
     public DateTime CreatedAt { get; set; }
     public int RoleId { get; set; }
 
-    public Roles Role { get; set; } = null!;
+    public ICollection<Roles?> Roles { get; set; } = new List< Roles?>();
 }

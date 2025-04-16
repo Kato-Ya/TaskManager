@@ -21,7 +21,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsersList()
     {
-        var users = _userService.GetAllUsersAsync();
+        var users = await _userService.GetAllUsersAsync();
         return Ok(users);
     }
 
@@ -30,7 +30,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserById(int userId)
     {
-        var user = _userService.GetByIdUserAsync(userId);
+        var user = await _userService.GetByIdUserAsync(userId);
         return Ok(user);
     }
 
@@ -43,7 +43,7 @@ public class UserController : ControllerBase
             return BadRequest("User is null");
         }
 
-        var createdUser= _userService.CreateUserAsync(userDto);
+        var createdUser= await _userService.CreateUserAsync(userDto);
         return Ok(createdUser);
     }
 }
