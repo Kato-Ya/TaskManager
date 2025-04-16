@@ -8,6 +8,7 @@ public class Tasks
 {
     public Tasks(TaskDto dto)
     {
+        Id = dto.Id;
         Title = dto.Title;
         Description = dto.Description;
         Status = dto.Status ?? "Pending";

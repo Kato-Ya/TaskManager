@@ -1,6 +1,4 @@
-﻿namespace UserService.Interfaces
+﻿namespace UserService.Interfaces;
+public interface IRoleService
 {
-    public interface IRoleService
-    {
-    }
 }
