@@ -18,9 +18,14 @@ public class UserConfiguration : IEntityTypeConfiguration<Users>
         builder.Property(x => x.RoleId).HasColumnName("role_id").HasDefaultValue(2);
 
         builder.HasOne(x => x.Role)
-            .WithMany(r => r.Users)
+            .WithMany(r => r.Users!)
             .HasForeignKey(x => x.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
+        //builder
+        //    .HasMany(x => x.Roles)
+        //    .WithMany(r => r.AdditionalUsers)
+        //    .UsingEntity(j =>
+        //        j.ToTable("user_roles"));
 
     }
 }

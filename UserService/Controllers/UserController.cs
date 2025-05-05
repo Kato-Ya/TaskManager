@@ -46,4 +46,27 @@ public class UserController : ControllerBase
         var createdUser= await _userService.CreateUserAsync(userDto);
         return Ok(createdUser);
     }
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateUser([FromBody] UserDto userDto, int id)
+    {
+        if (id != userDto.Id)
+        {
+            return BadRequest("Id's do not match");
+        }
+
+        var updatedUser = await _userService.UpdateUserAsync(userDto);
+        return Ok(updatedUser);
+    }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteUser(int userId)
+    {
+        var deletedUser = await _userService.DeleteUserAsync(userId);
+        return Ok(deletedUser);
+    }
 }

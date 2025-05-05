@@ -19,7 +19,9 @@ public class Roles
     public string Name { get; set; } = null!;
     public string? Description { get; set; }
 
-    public ICollection<Users?> Users { get; set; } = new List<Users?>();
-    //public Users User { get; set; } = null!;
+    public ICollection<Users?> Users { get; set; } = new List<Users>();
+    public Users User { get; set; } = null!;
+
+    //public ICollection<Users> AdditionalUsers { get; set; } = new List<Users>();
 
 }

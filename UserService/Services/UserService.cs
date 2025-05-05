@@ -31,4 +31,38 @@ public class UserService : IUserService
         return await _repository.AddAsync(new Users(userDto));
     }
 
+
+    public async Task<Users> UpdateUserAsync(UserDto userDto)
+    {
+        var currentUser = await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userDto.Id));
+
+        if (currentUser == null)
+        {
+            throw new ArgumentException("User did not found");
+        }
+
+        currentUser.Id = userDto.Id;
+        currentUser.Username = userDto.Username;
+        currentUser.Email = userDto.Email;
+        currentUser.PasswordHash = userDto.PasswordHash;
+        currentUser.CreatedAt = userDto.CreatedAt;
+        currentUser.RoleId = userDto.RoleId;
+        currentUser.Roles = userDto.Roles;
+
+        await _repository.UpdateAsync(currentUser);
+        return currentUser;
+    }
+
+    public async Task<bool> DeleteUserAsync(int userId)
+    {
+        var user= await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
+
+        if (user== null)
+        {
+            return false;
+        }
+
+        await _repository.DeleteAsync(user);
+        return true;
+    }
 }

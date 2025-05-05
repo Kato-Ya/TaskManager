@@ -46,4 +46,27 @@ public class RoleController : ControllerBase
         var createdRole =  await _roleService.CreateRoleAsync(roleDto);
         return Ok(createdRole);
     }
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateRole([FromBody] RoleDto roleDto, int id)
+    {
+        if (id != roleDto.Id)
+        {
+            return BadRequest("Id's do not match");
+        }
+
+        var updatedRole = await _roleService.UpdateRoleAsync(roleDto);
+        return Ok(updatedRole);
+    }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteRole(int roleId)
+    {
+        var deletedRole = await _roleService.DeleteRoleAsync(roleId);
+        return Ok(deletedRole);
+    }
 }

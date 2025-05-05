@@ -11,7 +11,7 @@ public class Users
         Email = dto.Email;
         PasswordHash = dto.PasswordHash;
         CreatedAt = dto.CreatedAt;
-        RoleId = dto.RoleId;
+        //RoleId = dto.RoleId;
         Roles = dto.Roles;
 
     }
@@ -21,6 +21,6 @@ public class Users
     public string PasswordHash { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
     public int RoleId { get; set; }
-
+    public Roles Role { get; set; } = null!; 
     public ICollection<Roles?> Roles { get; set; } = new List< Roles?>();
 }

@@ -48,4 +48,28 @@ public class TaskController : ControllerBase
         return Ok(createdTask);
 
     }
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateTask([FromBody] TaskDto taskDto, int id)
+    {
+        if (id != taskDto.Id)
+        {
+            return BadRequest("Id's do not match");
+        }
+
+        var updatedTasks = await _taskService.UpdateTaskAsync(taskDto);
+        return Ok(updatedTasks);
+    }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteTask(int taskId)
+    {
+        var deletedTask= await _taskService.DeleteTaskAsync(taskId);
+        return Ok(deletedTask);
+    }
+
 }
