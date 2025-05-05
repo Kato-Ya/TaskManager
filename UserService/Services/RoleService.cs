@@ -43,7 +43,7 @@ public class RoleService : IRoleService
         currentRole.Id = roleDto.Id;
         currentRole.Name = roleDto.Name;
         currentRole.Description = roleDto.Description;
-        //currentRole.Users= roleDto.Users;
+        currentRole.Users= roleDto.Users;
 
         await _repository.UpdateAsync(currentRole);
         return currentRole;
