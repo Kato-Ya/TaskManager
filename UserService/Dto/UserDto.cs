@@ -8,7 +8,8 @@ public class UserDto
     public string Email { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
-    public int RoleId { get; set; }
 
-    public ICollection<Roles?> Roles { get; set; } = new List<Roles?>();
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+    //public ICollection<Roles?> Roles { get; set; } = new List<Roles?>();
 }

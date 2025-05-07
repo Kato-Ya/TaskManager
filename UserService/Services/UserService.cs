@@ -46,7 +46,9 @@ public class UserService : IUserService
         currentUser.Email = userDto.Email;
         currentUser.PasswordHash = userDto.PasswordHash;
         currentUser.CreatedAt = userDto.CreatedAt;
-        currentUser.Roles = userDto.Roles;
+        currentUser.UserRoles = userDto.UserRoles;
+        //currentUser.Roles = userDto.Roles;
+
 
         await _repository.UpdateAsync(currentUser);
         return currentUser;
@@ -56,7 +58,7 @@ public class UserService : IUserService
     {
         var user= await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
 
-        if (user== null)
+        if (user == null)
         {
             return false;
         }
