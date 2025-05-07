@@ -46,7 +46,6 @@ public class UserService : IUserService
         currentUser.Email = userDto.Email;
         currentUser.PasswordHash = userDto.PasswordHash;
         currentUser.CreatedAt = userDto.CreatedAt;
-        currentUser.RoleId = userDto.RoleId;
         currentUser.Roles = userDto.Roles;
 
         await _repository.UpdateAsync(currentUser);

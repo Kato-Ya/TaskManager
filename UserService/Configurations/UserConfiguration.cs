@@ -4,28 +4,50 @@ using UserService.Entities;
 
 namespace UserService.Configurations;
 
+//public class UserConfiguration : IEntityTypeConfiguration<Users>
+//{
+//    public void Configure(EntityTypeBuilder<Users> builder)
+//    {
+//        builder.ToTable("users");
+//        builder.HasKey(x => x.Id);
+//        builder.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
+//        builder.Property(x => x.Username).HasColumnName("username").HasMaxLength(50).IsRequired();
+//        builder.Property(x => x.Email).HasColumnName("email").HasMaxLength(100).IsRequired();
+//        builder.Property(x => x.PasswordHash).HasColumnName("password_hash").IsRequired();
+//        builder.Property(x => x.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+//        builder
+//            .HasMany(u => u.Roles)
+//            .WithMany(r => r.Users)
+//            .UsingEntity<Dictionary<string, object>>(
+//                "user_roles",
+//                u => u.HasOne<Roles>().WithMany().HasForeignKey("role_id"),
+//                r => r.HasOne<Users>().WithMany().HasForeignKey("user_id"),
+//                ur =>
+//                {
+//                    ur.HasKey("user_id", "role_id");
+//                    ur.ToTable("user_roles");
+//                });
+
+//    }
+//}
+
 public class UserConfiguration : IEntityTypeConfiguration<Users>
 {
     public void Configure(EntityTypeBuilder<Users> builder)
     {
         builder.ToTable("users");
+
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
         builder.Property(x => x.Username).HasColumnName("username").HasMaxLength(50).IsRequired();
         builder.Property(x => x.Email).HasColumnName("email").HasMaxLength(100).IsRequired();
         builder.Property(x => x.PasswordHash).HasColumnName("password_hash").IsRequired();
         builder.Property(x => x.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
-        builder.Property(x => x.RoleId).HasColumnName("role_id").HasDefaultValue(2);
 
-        builder.HasOne(x => x.Role)
-            .WithMany(r => r.Users!)
-            .HasForeignKey(x => x.RoleId)
-            .OnDelete(DeleteBehavior.Restrict);
-        //builder
-        //    .HasMany(x => x.Roles)
-        //    .WithMany(r => r.AdditionalUsers)
-        //    .UsingEntity(j =>
-        //        j.ToTable("user_roles"));
-
+        builder
+            .HasMany(u => u.UserRoles)
+            .WithOne(ur => ur.User)
+            .HasForeignKey(ur => ur.UserId);
     }
 }
