@@ -6,6 +6,7 @@ namespace TaskService.Entities;
 [Table("tasks")]
 public class Tasks
 {
+    public Tasks() { }
     public Tasks(TaskDto dto)
     {
         Id = dto.Id;

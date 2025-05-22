@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using UserService.Entities;
 
 public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
 {
@@ -7,7 +8,7 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
     {
         builder.ToTable("user_roles");
 
-        builder.HasKey(ur => ur.Id); // если используешь Id
+        builder.HasKey(ur => ur.Id);
         builder.Property(ur => ur.Id).HasColumnName("id").ValueGeneratedOnAdd();
 
         builder.Property(ur => ur.UserId).HasColumnName("user_id").IsRequired();

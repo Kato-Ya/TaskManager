@@ -1,6 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using TaskService.Data;
 using TaskService.Configurations;
+using TaskService.Services;
+using TaskService.Interfaces;
+using TaskService;
+using Ardalis.Specification;
+using Ardalis.Specification.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +19,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddTaskServices();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

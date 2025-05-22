@@ -23,7 +23,7 @@ public class UserService : IUserService
 
     public async Task<Users?> GetByIdUserAsync(int userId)
     {
-        return await _repository.GetByIdAsync(new UserGetByIdSpecification(userId));
+        return await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
     }
 
     public async Task<Users> CreateUserAsync(UserDto userDto)
@@ -46,7 +46,7 @@ public class UserService : IUserService
         currentUser.Email = userDto.Email;
         currentUser.PasswordHash = userDto.PasswordHash;
         currentUser.CreatedAt = userDto.CreatedAt;
-        currentUser.UserRoles = userDto.UserRoles;
+        //currentUser.UserRoles = userDto.UserRoles;
         //currentUser.Roles = userDto.Roles;
 
 

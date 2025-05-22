@@ -1,0 +1,23 @@
+﻿using TaskService.Services;
+using TaskService.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using TaskService.Interfaces;
+using Ardalis.Specification.EntityFrameworkCore;
+using Ardalis.Specification;
+using TaskService.Repositories;
+
+
+namespace TaskService;
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddTaskServices(this IServiceCollection services)
+    {
+        //TODO: Verification comment
+        services.AddScoped<ITaskService, Services.TaskService>();
+
+        services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryTask<>));
+
+        return services;
+    }
+}

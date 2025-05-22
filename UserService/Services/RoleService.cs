@@ -23,7 +23,7 @@ public class RoleService : IRoleService
 
     public async Task<Roles?> GetByIdRoleAsync(int roleId)
     {
-        return await _repository.GetByIdAsync(new RoleGetByIdSpecification(roleId));
+        return await _repository.FirstOrDefaultAsync(new RoleGetByIdSpecification(roleId));
     }
 
     public async Task<Roles> CreateRoleAsync(RoleDto roleDto)
@@ -43,7 +43,7 @@ public class RoleService : IRoleService
         currentRole.Id = roleDto.Id;
         currentRole.Name = roleDto.Name;
         currentRole.Description = roleDto.Description;
-        currentRole.UserRoles = roleDto.UserRoles;
+        //currentRole.UserRoles = roleDto.UserRoles;
 
         await _repository.UpdateAsync(currentRole);
         return currentRole;

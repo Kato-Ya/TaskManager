@@ -7,8 +7,8 @@ public class TaskGetByIdSpecification : Specification<Tasks>
 {
     public TaskGetByIdSpecification(int taskId)
     {
-        Query.Where(task => task.Id == taskId)
-            .Include(task => task.CreatorId)
-            .Include(task => task.AssigneeId);
+        Query.Where(task => task.Id == taskId);
+        //.Include(task => task.CreatorId)
+        //.Include(task => task.AssigneeId);
     }
 }

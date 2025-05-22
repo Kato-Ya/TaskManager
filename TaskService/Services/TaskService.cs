@@ -49,7 +49,9 @@ public class TaskService : ITaskService
         currentTask.Priority = taskDto.Priority;
         currentTask.CreatorId = taskDto.CreatorId;
         currentTask.AssigneeId = taskDto.AssigneeId;
-        currentTask.DueDate = taskDto.DueDate;
+        currentTask.CreatedAt = taskDto.CreatedAt.ToUniversalTime();
+        currentTask.DueDate = taskDto.DueDate?.ToUniversalTime();
+
 
         await _repository.UpdateAsync(currentTask);
         return currentTask;

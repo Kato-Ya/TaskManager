@@ -1,9 +1,13 @@
 ﻿using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations.Schema;
 using UserService.Dto;
 
 namespace UserService.Entities;
+
+[Table("users")]
 public class Users
 {
+    public Users() { }
     public Users(UserDto dto)
     {
         Id = dto.Id;
@@ -12,7 +16,7 @@ public class Users
         PasswordHash = dto.PasswordHash;
         CreatedAt = dto.CreatedAt;
         //Roles = dto.Roles;
-        UserRoles = dto.UserRoles;
+        //UserRoles = dto.UserRoles;
 
     }
     public int Id { get; set; }

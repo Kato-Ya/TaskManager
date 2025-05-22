@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using System.Data;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using UserService.Dto;
 
 namespace UserService.Entities;
 
+[Table("roles")]
 public class Roles
 {
+    public Roles() { }
     public Roles(RoleDto dto)
     {
         Id = dto.Id;
         Name = dto.Name;
         Description = dto.Description;
-        UserRoles = dto.UserRoles;
+        //UserRoles = dto.UserRoles;
 
     }
     public int Id { get; set; }
