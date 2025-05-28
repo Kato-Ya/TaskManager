@@ -4,6 +4,7 @@ using UserService.Data;
 using UserService.Dto;
 using UserService.Entities;
 using UserService.Specifications.UserSpecifications;
+using UserService.Specifications.UserRoleSpecifications;
 using Ardalis.Specification;
 using System.Threading.Tasks;
 
@@ -60,10 +61,12 @@ public class UserService : IUserService
 
         if (user == null)
         {
-            return false;
+            throw new ArgumentException("User did not found");
         }
 
         await _repository.DeleteAsync(user);
         return true;
     }
+
+
 }

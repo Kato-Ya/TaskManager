@@ -13,7 +13,8 @@ public static class ServiceCollectionExtensions
     {
         //TODO: Verification comment
         services.AddScoped<IUserService, Services.UserService>();
-        services.AddScoped<IRoleService, Services.RoleService>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IUserRoleService, UserRoleService>();
 
         services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryUser<>));
 
