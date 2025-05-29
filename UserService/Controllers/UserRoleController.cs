@@ -17,10 +17,27 @@ public class UserRoleController : ControllerBase
         _userRoleService = userRoleService;
     }
 
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserRoleList()
+    {
+        var usersRoles = await _userRoleService.GetAllUserRoleAsync();
+        return Ok(usersRoles);
+    }
+
+    [HttpGet("{userRoleId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUserRoleById(int userRoleId)
+    {
+        var userRole = await _userRoleService.GetUserRoleByIdAsync(userRoleId);
+        return Ok(userRole);
+    }
+
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteUserRole(/*int userId, int roleId*/ int id)
+    public async Task<IActionResult> DeleteUserRole(int id)
     {
         await _userRoleService.DeleteUserRoleAsync(id);
         return Ok();

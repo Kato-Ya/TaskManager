@@ -21,9 +21,18 @@ public class UserRoleService : IUserRoleService
         _repositoryUser = repositoryUser;
     }
 
+    public async Task<IEnumerable<UserRole>> GetAllUserRoleAsync()
+    {
+        return await _repository.ListAsync(new /*Specification<UserRole>() ??*/ UserRoleGetAllSpecification());
+    }
+
+    public async Task<UserRole> GetUserRoleByIdAsync(int userRoleId)
+    {
+        return await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleId));
+    }
+
     public async Task AssignRolesAsync(int userId, List<int> roleIds)
     {
-        //var user = await _repository.GetByIdAsync(userId);
         var user = await _repositoryUser.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
 
         if (user == null)
@@ -59,7 +68,6 @@ public class UserRoleService : IUserRoleService
 
     public async Task<UserRole> UpdateUserRoleAsync(UserRoleDto userRoleDto)
     {
-        //var userRole = await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleDto.UserId, userRoleDto.RoleId));
         var userRole = await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleDto.Id));
 
         if (userRole == null)
@@ -67,7 +75,6 @@ public class UserRoleService : IUserRoleService
             throw new ArgumentException("User did not found");
         }
 
-        //userRole.Id = userRoleDto.Id;
         userRole.RoleId = userRoleDto.RoleId;
         userRole.UserId = userRoleDto.UserId;
 

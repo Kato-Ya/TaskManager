@@ -5,9 +5,8 @@ namespace UserService.Specifications.UserRoleSpecifications;
 
 public class UserRoleGetByIdSpecifications : Specification<UserRole>
 {
-    public UserRoleGetByIdSpecifications(/*int userId, int roleId*/ int id)
+    public UserRoleGetByIdSpecifications(int userRoleId)
     {
-        //Query.Where(userRole => userRole.UserId == userId && userRole.RoleId == roleId);
-        Query.Where(userRole => userRole.Id == id);
+        Query.Where(userRole => userRole.Id == userRoleId);
     }
 }
