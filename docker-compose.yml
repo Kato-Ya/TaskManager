@@ -1,0 +1,26 @@
+﻿version: '3.8'
+
+services:
+  userservice:
+    build:
+      context: .
+      dockerfile: UserService/Dockerfile
+    ports:
+      - "5001:8081" # out -> in
+    networks:
+      - app-network
+
+  taskservice:
+    build:
+      context: .
+      dockerfile: TaskService/Dockerfile
+    ports:
+      - "5002:8082"
+    depends_on:
+      - userservice
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

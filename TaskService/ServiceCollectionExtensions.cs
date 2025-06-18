@@ -18,6 +18,9 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryTask<>));
 
+        //gRPC
+        services.AddScoped<GrpcUserClientService>();
+
         return services;
     }
 }

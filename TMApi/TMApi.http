@@ -1,6 +1,0 @@
-@TMApi_HostAddress = http://localhost:5185
-
-GET {{TMApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
