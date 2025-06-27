@@ -20,5 +20,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
 
+        //modelBuilder.Entity<Roles>().ToTable("roles");
+        //modelBuilder.Entity<Users>().ToTable("users");
+
     }
 }
