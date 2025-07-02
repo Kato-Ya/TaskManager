@@ -1,0 +1,19 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "TaskService.Protos";
+
+package notification;
+
+service NotificationGrpc {
+  rpc SendNotification (NotificationRequest) returns (NotificationResponse);
+}
+
+message NotificationRequest {
+  int32 userId = 1;
+  string message = 2;
+  int32 taskId = 3;
+}
+
+message NotificationResponse {
+  bool success = 1;
+}

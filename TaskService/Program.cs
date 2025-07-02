@@ -6,10 +6,7 @@ using TaskService.Interfaces;
 using TaskService;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
-using UserService.Protos;
-using Grpc.Net.ClientFactory;
-using Microsoft.Extensions.DependencyInjection;
-
+using TaskService.Protos;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +21,11 @@ builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
     o.Address = new Uri("http://userservice:8081");
 });
 
+builder.Services.AddGrpcClient<NotificationGrpc.NotificationGrpcClient>(o =>
+{
+    o.Address = new Uri("http://notificationservice:8081");
+});
+builder.Services.AddScoped<GrpcNotificationClientService>();
 
 
 builder.Services.AddControllers();

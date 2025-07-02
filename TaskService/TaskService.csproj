@@ -9,17 +9,13 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
-  <!--<ItemGroup>
-    <None Remove="Protos\user.proto" />
-  </ItemGroup>-->
-
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.0.1" />
     <PackageReference Include="Google.Protobuf" Version="3.31.1" />
     <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.71.0" />
     <PackageReference Include="Grpc.Tools" Version="2.72.0">
-      <PrivateAssets>all</PrivateAssets>
+		<PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
@@ -35,10 +31,7 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\user.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\notification.proto" GrpcServices="Client" />
   </ItemGroup>
-
-  <!--<ItemGroup>
-    <Protobuf Include="Protos/user.proto" GrpcServices="Client" />
-  </ItemGroup>-->
 
 </Project>

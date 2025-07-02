@@ -72,4 +72,12 @@ public class TaskController : ControllerBase
         return Ok(deletedTask);
     }
 
+    [HttpPost("{taskId}/assign/{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> AssignUserToTask(int taskId, int userId)
+    {
+        var task = await _taskService.AssignUserToTaskAsync(taskId, userId);
+        return Ok(task);
+    }
+
 }

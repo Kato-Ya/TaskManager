@@ -8,8 +8,6 @@ services:
     restart: always
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
     ports:
       - "5433:5432"
     volumes:
@@ -17,6 +15,13 @@ services:
       
     networks:
       - app-network
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+     - app-network
 
   userservice:
     build:
@@ -41,6 +46,19 @@ services:
       - userservice
     networks:
       - app-network
+   
+  notificationservice:
+     build:
+       context: .
+       dockerfile: NotificationService/Dockerfile
+     ports:
+       - "5003:8080"
+     environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+     depends_on:
+       - redis
+     networks:
+       - app-network
 
 volumes:
   postgres_data:

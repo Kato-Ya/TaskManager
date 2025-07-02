@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /UserService/appsettings.Development.json
 /TaskService/appsettings.Development.json
+/NotificationService/appsettings.Development.json
+/ChatService/appsettings.Development.json
