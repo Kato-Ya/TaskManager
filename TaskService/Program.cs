@@ -42,15 +42,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", async (GrpcUserClientService clientUserService) =>
+app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
 {
     var user = await clientUserService.GetUserByIdAsync(1);
     return user is not null ? $"User: {user.Username} with id: {user.Id} " : "User not found";
 });
 
-app.MapGet("/", async (GrpcNotificationClientService clientService) =>
+app.MapGet("/notification", async (GrpcNotificationClientService clientService) =>
 {
-    var notification = await clientService.SendNotificationAsync(1,"message",1);
+    var notification = await clientService.SendNotificationAsync(1, "message", 1);
     return notification;
 });
 
