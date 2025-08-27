@@ -10,15 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Google.Protobuf" Version="3.31.1" />
-	  <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
-	  <PackageReference Include="Grpc.Net.ClientFactory" Version="2.71.0" />
-	  <PackageReference Include="Grpc.Tools" Version="2.72.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-		  <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.0.1" />
-      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="1.1.0" />
@@ -28,7 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\user.proto" GrpcServices="Client" />
+    <Folder Include="Configuration\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>

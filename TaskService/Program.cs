@@ -18,12 +18,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 {
-    o.Address = new Uri("http://userservice:8081");
+    o.Address = new Uri("http://userservice:8080");
 });
+builder.Services.AddScoped<GrpcUserClientService>();
 
 builder.Services.AddGrpcClient<NotificationGrpc.NotificationGrpcClient>(o =>
 {
-    o.Address = new Uri("http://notificationservice:8081");
+    o.Address = new Uri("http://notificationservice:8080");
 });
 builder.Services.AddScoped<GrpcNotificationClientService>();
 

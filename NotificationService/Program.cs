@@ -13,14 +13,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddGrpc(); 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("redis:6379")); // Redis!!!!! redis:6379 localhost
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("Redis")); // Redis!!!!! redis:6379 localhost
 builder.Services.AddScoped<INotificationService, NotificationService.Services.NotificationService>();
 
 var app = builder.Build();
 
 app.MapGrpcService<GrpcNotificationServerService>();
 app.MapControllers();
-app.MapGet("/", () => "~NotificationService is running~");
+app.MapGet("/NotificationService", () => "~NotificationService is running~");
 
 
 // Configure the HTTP request pipeline.

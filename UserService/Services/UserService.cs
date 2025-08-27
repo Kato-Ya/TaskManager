@@ -31,8 +31,6 @@ public class UserService : IUserService
     {
         return await _repository.AddAsync(new Users(userDto));
     }
-
-
     public async Task<Users> UpdateUserAsync(UserDto userDto)
     {
         var currentUser = await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userDto.Id));
