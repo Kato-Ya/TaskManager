@@ -8,13 +8,12 @@ public class TaskDto
     public string Status { get; set; } = "Pending";
     public string Priority { get; set; } = "Medium";
 
-    public int CreatorId { get; set; }
-    public int? AssigneeId { get; set; }
+    //public int CreatorId { get; set; }
+    //public int? AssigneeId { get; set; }
 
-    public UserDto? Creator { get; set; }
-    public UserDto? Assignee { get; set; }
+    //public UserDto? Creator { get; set; }
+    //public UserDto? Assignee { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-    public DateTime? DueDate { get; set; }
+    //public DateTime CreatedAt { get; set; }
+    //public DateTime? DueDate { get; set; }
 }
-

@@ -20,6 +20,7 @@ public class NotificationService : INotificationService
         var notification = new NotificationDto
         {
             TaskId = taskId,
+            UserId = userId,
             Message = message,
             AsignedTime = DateTime.UtcNow,
             IsRead = false

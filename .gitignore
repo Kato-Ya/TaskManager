@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /TaskService/appsettings.Development.json
 /NotificationService/appsettings.Development.json
 /ChatService/appsettings.Development.json
+/AuthenticationService/appsettings.Development.json

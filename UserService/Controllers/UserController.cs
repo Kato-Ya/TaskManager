@@ -36,14 +36,14 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto)
     {
-        if (userDto == null)
+        if (createUserDto == null)
         {
             return BadRequest("User is null");
         }
 
-        var createdUser= await _userService.CreateUserAsync(userDto);
+        var createdUser= await _userService.CreateUserAsync(createUserDto);
         return Ok(createdUser);
     }
 

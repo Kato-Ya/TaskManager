@@ -23,7 +23,7 @@ public class UserRoleService : IUserRoleService
 
     public async Task<IEnumerable<UserRole>> GetAllUserRoleAsync()
     {
-        return await _repository.ListAsync(new /*Specification<UserRole>() ??*/ UserRoleGetAllSpecification());
+        return await _repository.ListAsync(new UserRoleGetAllSpecification());
     }
 
     public async Task<UserRole> GetUserRoleByIdAsync(int userRoleId)
@@ -53,9 +53,9 @@ public class UserRoleService : IUserRoleService
         await _repository.SaveChangesAsync();
     }
 
-    public async Task DeleteUserRoleAsync(/*int userId, int roleId*/ int id)
+    public async Task DeleteUserRoleAsync(int userRoleId)
     {
-        var userRole = await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(id));
+        var userRole = await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleId));
 
         if (userRole == null)
         {

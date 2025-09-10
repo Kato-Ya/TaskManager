@@ -46,7 +46,6 @@ public class TaskController : ControllerBase
 
         var createdTask = await _taskService.CreateTaskAsync(taskDto);
         return Ok(createdTask);
-
     }
 
     [HttpPut("{id:int}")]
@@ -74,9 +73,9 @@ public class TaskController : ControllerBase
 
     [HttpPost("{taskId}/assign/{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> AssignUserToTask(int taskId, int userId)
+    public async Task<IActionResult> AssignUserToTask(int userId, int taskId)
     {
-        var task = await _taskService.AssignUserToTaskAsync(taskId, userId);
+        var task = await _taskService.AssignUserToTaskAsync(userId, taskId);
         return Ok(task);
     }
 

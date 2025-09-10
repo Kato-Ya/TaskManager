@@ -1,24 +1,30 @@
 ﻿using Ardalis.Specification.EntityFrameworkCore;
+using UserService.Specifications.UserSpecifications;
 using Grpc.Core;
 using UserService.Data;
 using UserService.Protos;
 using Microsoft.EntityFrameworkCore;
+using Ardalis.Specification;
+using UserService.Entities;
 
 namespace UserService.Services;
 public class GrpcUserServerService : UserGrpc.UserGrpcBase
 {
-    private readonly ApplicationDbContext _dbContext;
+    //private readonly ApplicationDbContext _dbContext;
+    private readonly IRepositoryBase<Users> _usersRepository;
 
-    public GrpcUserServerService(ApplicationDbContext dbContext)
+    public GrpcUserServerService(/*ApplicationDbContext dbContext,*/ IRepositoryBase<Users> repository)
     {
-        _dbContext = dbContext;
+        //_dbContext = dbContext;
+        _usersRepository = repository;
     }
 
     public override async Task<UserResponse> GetUserById(UserIdRequest request, ServerCallContext callContext)
     {
-        var user = await _dbContext.Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(user => user.Id == request.Id);
+        //var user = await _dbContext.Users
+        //    .AsNoTracking()
+        //    .FirstOrDefaultAsync(user => user.Id == request.Id);
+        var user = await _usersRepository.FirstOrDefaultAsync(new UserGetByIdSpecification(request.Id));
 
         if (user == null)
         {

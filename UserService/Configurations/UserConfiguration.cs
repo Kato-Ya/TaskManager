@@ -44,6 +44,7 @@ public class UserConfiguration : IEntityTypeConfiguration<Users>
         builder.Property(x => x.Email).HasColumnName("email").HasMaxLength(100).IsRequired();
         builder.Property(x => x.PasswordHash).HasColumnName("password_hash").IsRequired();
         builder.Property(x => x.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+        builder.Property(x => x.State).HasColumnName("state").IsRequired();
 
         builder
             .HasMany(u => u.UserRoles)

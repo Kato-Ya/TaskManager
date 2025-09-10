@@ -41,6 +41,7 @@ services:
       dockerfile: TaskService/Dockerfile
     ports:
       - "5002:8080"
+      - "5007:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:

@@ -23,8 +23,7 @@ public class ChatHub : Hub
         if (user == null)
         {
             throw new HubException($"$User with id {senderId} not found");
-        }
-
+        } 
 
         var message = new ChatMessage
         {

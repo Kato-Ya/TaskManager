@@ -27,10 +27,20 @@ public class UserService : IUserService
         return await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
     }
 
-    public async Task<Users> CreateUserAsync(UserDto userDto)
+    public async Task<Users> CreateUserAsync(CreateUserDto createUserDto)
     {
-        return await _repository.AddAsync(new Users(userDto));
+        var user = new Users
+        {
+            Username = createUserDto.Username,
+            Email = createUserDto.Email,
+            PasswordHash = createUserDto.PasswordHash,
+            CreatedAt = createUserDto.CreatedAt,
+            State = createUserDto.State
+        };
+
+        return await _repository.AddAsync(user);
     }
+
     public async Task<Users> UpdateUserAsync(UserDto userDto)
     {
         var currentUser = await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userDto.Id));
@@ -43,8 +53,9 @@ public class UserService : IUserService
         currentUser.Id = userDto.Id;
         currentUser.Username = userDto.Username;
         currentUser.Email = userDto.Email;
-        currentUser.PasswordHash = userDto.PasswordHash;
-        currentUser.CreatedAt = userDto.CreatedAt;
+        currentUser.State = userDto.State;
+        //currentUser.PasswordHash = userDto.PasswordHash;
+        //currentUser.CreatedAt = userDto.CreatedAt;
         //currentUser.UserRoles = userDto.UserRoles;
         //currentUser.Roles = userDto.Roles;
 

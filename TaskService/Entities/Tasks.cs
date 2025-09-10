@@ -14,9 +14,9 @@ public class Tasks
         Description = dto.Description;
         Status = dto.Status ?? "Pending";
         Priority = dto.Priority ?? "Medium";
-        CreatorId = dto.CreatorId;
-        AssigneeId = dto.AssigneeId;
-        DueDate = dto.DueDate;
+        //CreatorId = dto.CreatorId;
+        //AssigneeId = dto.AssigneeId;
+        //DueDate = dto.DueDate;
     }
     public int Id { get; set; }
 
