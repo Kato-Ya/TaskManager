@@ -69,11 +69,26 @@ services:
        dockerfile: ChatService/Dockerfile
      ports:
        - "5004:8080"
+       - "5010:8081"
      environment:
        - ASPNETCORE_ENVIRONMENT=Development
      depends_on:
        - redis
        - postgres
+     networks:
+       - app-network
+
+  authservice:
+     build:
+       context: .
+       dockerfile: AuthenticationService/Dockerfile
+     ports:
+       - "5008:8080" 
+       - "5009:8081"
+     environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+     depends_on:
+       - userservice
      networks:
        - app-network
 

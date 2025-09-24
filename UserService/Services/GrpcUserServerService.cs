@@ -39,4 +39,22 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
             CreatedAt = user.CreatedAt.ToString("O"),
         };
     }
+
+    public override async Task<UserResponse> GetUserByName(UserNameRequest request, ServerCallContext callContext)
+    {
+        var user = await _usersRepository.FirstOrDefaultAsync(new UserGetByNameSpecification(request.Username));
+
+        if (user == null)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, $"User with name {request.Username} not found"));
+        }
+
+        return new UserResponse
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt.ToString("O"),
+        };
+    }
 }

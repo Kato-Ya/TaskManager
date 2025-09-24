@@ -10,12 +10,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.0.1" />
+	  <PackageReference Include="Google.Protobuf" Version="3.31.1" />
+	  <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
+	  <PackageReference Include="Grpc.Net.ClientFactory" Version="2.71.0" />
+	  <PackageReference Include="Grpc.Tools" Version="2.72.0" />
+		  <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.14.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <!--<Folder Include="Controllers\" />
+    <Folder Include="Data\" />
+    <Folder Include="Dto\" />-->
+    <Protobuf Include="Protos\user.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\authentication.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

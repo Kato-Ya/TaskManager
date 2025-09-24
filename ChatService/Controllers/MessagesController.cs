@@ -4,6 +4,9 @@ using ChatService.Entities;
 using ChatService.Interfaces;
 
 namespace ChatService.Controllers;
+
+[Route("api/chat")]
+[ApiController]
 public class MessagesController : ControllerBase
 {
     private readonly IMessageService _messageService;

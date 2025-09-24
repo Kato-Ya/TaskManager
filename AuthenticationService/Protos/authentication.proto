@@ -1,0 +1,34 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Authentication.Protos";
+
+package authentication;
+
+service AuthenticationGrpc {
+  rpc SignIn (SignInRequest) returns (AuthResponse);
+  rpc Refresh (RefreshRequest) returns (AuthResponse);
+  rpc SignOut (SignOutRequest) returns (SignOutResponse);
+}
+
+message SignInRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message RefreshRequest {
+  string refreshToken = 1;
+}
+
+message SignOutRequest {
+  string refreshToken = 1;
+}
+
+message AuthResponse {
+  string accessToken = 1;
+  string refreshToken = 2;
+  int64 expiresIn = 3;
+}
+
+message SignOutResponse {
+  bool success = 1;
+}

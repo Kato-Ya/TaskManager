@@ -7,14 +7,17 @@ using UserService.Specifications.UserSpecifications;
 using UserService.Specifications.UserRoleSpecifications;
 using Ardalis.Specification;
 using System.Threading.Tasks;
+using UserService.PasswordWorker;
 
 namespace UserService.Services;
 public class UserService : IUserService
 {
     private readonly IRepositoryBase<Users> _repository;
-    public UserService(IRepositoryBase<Users> repository)
+    private readonly IPasswordHasher _passwordHasher;
+    public UserService(IRepositoryBase<Users> repository, IPasswordHasher passwordHasher)
     {
         _repository = repository;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<IEnumerable<Users>> GetAllUsersAsync()
@@ -29,11 +32,12 @@ public class UserService : IUserService
 
     public async Task<Users> CreateUserAsync(CreateUserDto createUserDto)
     {
+        string passwordHash = _passwordHasher.Encrypt(createUserDto.Password);
         var user = new Users
         {
             Username = createUserDto.Username,
             Email = createUserDto.Email,
-            PasswordHash = createUserDto.PasswordHash,
+            PasswordHash = passwordHash,
             CreatedAt = createUserDto.CreatedAt,
             State = createUserDto.State
         };

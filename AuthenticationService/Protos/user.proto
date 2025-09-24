@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "UserService.Protos";
+option csharp_namespace = "AuthenticationService.Protos";
 
 package user;
 
