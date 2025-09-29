@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Ardalis.Specification;
 using UserService.Entities;
 
-namespace UserService.Services;
+namespace UserService.GrpcServices;
 public class GrpcUserServerService : UserGrpc.UserGrpcBase
 {
     //private readonly ApplicationDbContext _dbContext;

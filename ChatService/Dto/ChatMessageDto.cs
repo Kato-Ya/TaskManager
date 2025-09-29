@@ -1,5 +1,5 @@
-﻿namespace ChatService.Entities;
-public class ChatMessage
+﻿namespace ChatService.Dto;
+public class ChatMessageDto
 {
     public int Id { get; set; }
     public string? Room { get; set; } = "global";

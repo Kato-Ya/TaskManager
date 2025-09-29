@@ -5,15 +5,26 @@ option csharp_namespace = "Notification.Protos";
 package notification;
 
 service NotificationGrpc {
-  rpc SendNotification (NotificationRequest) returns (NotificationResponse);
+  rpc SendTaskNotification (NotificationTaskRequest) returns (NotificationTaskResponse);
+  rpc SendMessageNotification (NotificationMessageRequest) returns (NotificationMessageResponse);
 }
 
-message NotificationRequest {
+message NotificationTaskRequest {
   int32 userId = 1;
   string message = 2;
   int32 taskId = 3;
 }
 
-message NotificationResponse {
+message NotificationMessageRequest {
+  int32 userId = 1;
+  string message = 2;
+  int32 messageId = 3;
+}
+
+message NotificationTaskResponse {
+  bool success = 1;
+}
+
+message NotificationMessageResponse {
   bool success = 1;
 }

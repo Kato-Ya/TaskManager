@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using TaskService.Data;
 using TaskService.Configurations;
-using TaskService.Services;
 using TaskService.Interfaces;
 using TaskService;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using TaskService.Protos;
+using TaskService.GrpcServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,7 +51,7 @@ app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
 
 app.MapGet("/notification", async (GrpcNotificationClientService clientService) =>
 {
-    var notification = await clientService.SendNotificationAsync(1, "message", 1);
+    var notification = await clientService.SendTaskNotificationAsync(1, "message", 1);
     return notification;
 });
 

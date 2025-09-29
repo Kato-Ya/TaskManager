@@ -1,5 +1,6 @@
 ﻿using Ardalis.Specification;
 using ChatService.Entities;
+using ChatService.Dto;
 using ChatService.Interfaces;
 using ChatService.Specifications;
 

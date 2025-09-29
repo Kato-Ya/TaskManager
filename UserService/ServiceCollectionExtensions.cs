@@ -5,6 +5,7 @@ using Ardalis.Specification.EntityFrameworkCore;
 using Ardalis.Specification;
 using UserService.PasswordWorker;
 using UserService.Repositories;
+using UserService.GrpcServices;
 
 namespace UserService;
 

@@ -2,7 +2,7 @@
 using Grpc.Core;
 using TaskService.Protos;
 
-namespace TaskService.Services;
+namespace TaskService.GrpcServices;
 public class GrpcUserClientService
 {
     private readonly UserGrpc.UserGrpcClient _client;
@@ -26,7 +26,7 @@ public class GrpcUserClientService
                 CreatedAt = DateTime.Parse(response.CreatedAt)
             };
         }
-        catch (Grpc.Core.RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.NotFound)
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
         {
             return null;
         }

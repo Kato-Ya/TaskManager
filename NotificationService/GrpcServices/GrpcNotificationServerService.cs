@@ -12,10 +12,17 @@ public class GrpcNotificationServerService : NotificationGrpc.NotificationGrpcBa
         _notificationService = notificationService;
     }
 
-    public override async Task<NotificationResponse> SendNotification(NotificationRequest request,
+    public override async Task<NotificationTaskResponse> SendTaskNotification(NotificationTaskRequest request,
         ServerCallContext context)
     {
         var result = await _notificationService.SendNotificationAsync(request.UserId, request.Message, request.TaskId);
-        return new NotificationResponse {Success = result};
+        return new NotificationTaskResponse {Success = result};
+    }
+
+    public override async Task<NotificationMessageResponse> SendMessageNotification(NotificationMessageRequest request,
+        ServerCallContext context)
+    {
+        var result = await _notificationService.SendNotificationAsync(request.UserId, request.Message, request.MessageId);
+        return new NotificationMessageResponse { Success = result };
     }
 }

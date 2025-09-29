@@ -1,6 +1,6 @@
 ﻿using TaskService.Protos;
 
-namespace TaskService.Services;
+namespace TaskService.GrpcServices;
 public class GrpcNotificationClientService
 {
     private readonly NotificationGrpc.NotificationGrpcClient _client;
@@ -10,9 +10,9 @@ public class GrpcNotificationClientService
         _client = client;
     }
 
-    public async Task<bool> SendNotificationAsync(int userId, string message, int taskId)
+    public async Task<bool> SendTaskNotificationAsync(int userId, string message, int taskId)
     {
-        var response = await _client.SendNotificationAsync(new NotificationRequest
+        var response = await _client.SendTaskNotificationAsync(new NotificationTaskRequest
         {
             UserId = userId,
             Message = message,

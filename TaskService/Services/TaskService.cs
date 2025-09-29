@@ -8,6 +8,7 @@ using Ardalis.Specification;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using TaskService.GrpcServices;
 
 
 namespace TaskService.Services;
@@ -100,7 +101,7 @@ public class TaskService : ITaskService
         task.AssigneeId = userId;
         await _repository.UpdateAsync(task);
 
-        await _grpcNotificationClientService.SendNotificationAsync(
+        await _grpcNotificationClientService.SendTaskNotificationAsync(
             userId,
             $"Вы назначены на задачу: {task.Title}",
             task.Id);

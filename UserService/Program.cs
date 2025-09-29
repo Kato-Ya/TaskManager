@@ -3,7 +3,7 @@ using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UserService.Data;
-using UserService.Services;
+using UserService.GrpcServices;
 
 var builder = WebApplication.CreateBuilder(args);
 

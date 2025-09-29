@@ -1,6 +1,8 @@
 ﻿ using Authentication.Protos;
 using AuthenticationService.Interfaces;
+using AuthenticationService.Models;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
     
 namespace AuthenticationService.Controller;
@@ -17,6 +19,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signin")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
     {
         try
@@ -31,6 +36,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
     {
         try
@@ -45,6 +53,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signout")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> SignOut([FromBody] SignOutRequest request)
     {
         var response = await _authService.SignOut(request, null!);

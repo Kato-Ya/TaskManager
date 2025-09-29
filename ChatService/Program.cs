@@ -1,11 +1,13 @@
 using ChatService;
 using ChatService.Data;
 using ChatService.Hubs;
+using ChatService.Interfaces;
 using ChatService.Protos;
 using ChatService.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
+using TaskService.GrpcServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +34,14 @@ builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
     o.Address = new Uri("http://userservice:8080");
 });
 
+builder.Services.AddGrpcClient<NotificationGrpc.NotificationGrpcClient>(o =>
+{
+    o.Address = new Uri("http://notificationservice:8080");
+});
+
+builder.Services.AddScoped<IChatService, ChatService.Services.ChatService>();
 builder.Services.AddScoped<GrpcUserClientService>();
+builder.Services.AddScoped<GrpcNotificationClientService>();
 builder.Services.AddMessageServices();
 var app = builder.Build();
 

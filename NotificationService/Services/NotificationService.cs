@@ -22,7 +22,7 @@ public class NotificationService : INotificationService
             TaskId = taskId,
             UserId = userId,
             Message = message,
-            AsignedTime = DateTime.UtcNow,
+            AssignedTime = DateTime.UtcNow,
             IsRead = false
         };
 
