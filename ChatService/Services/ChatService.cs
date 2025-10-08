@@ -1,10 +1,12 @@
-﻿using ChatService.Dto;
+﻿using System.Collections.Concurrent;
+using ChatService.Dto;
 using ChatService.Entities;
 using ChatService.Hubs;
 using ChatService.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
-using TaskService.GrpcServices;
+using ChatService.GrpcServices;
+using ChatService.ConnectionManager;
 
 namespace ChatService.Services;
 public class ChatService : IChatService
@@ -13,17 +15,21 @@ public class ChatService : IChatService
     private readonly GrpcUserClientService _grpcUserClient;
     private readonly GrpcNotificationClientService _grpcNotificationClient;
     private readonly IHubContext<ChatHub> _hubContext;
+    private readonly IConnectionManager _connectionManager;
+
 
     public ChatService(
         IMessageService messageService,
         GrpcUserClientService grpcUserClient,
         GrpcNotificationClientService grpcNotificationClient,
-        IHubContext<ChatHub> hubContext)
+        IHubContext<ChatHub> hubContext, 
+        IConnectionManager connectionManager)
     {
         _messageService = messageService;
         _grpcUserClient = grpcUserClient;
         _grpcNotificationClient = grpcNotificationClient;
         _hubContext = hubContext;
+        _connectionManager = connectionManager;
     }
 
     public async Task<ChatMessageDto> SendMessageAsync(CreateChatMessageDto createChatMessageDto)
@@ -57,16 +63,40 @@ public class ChatService : IChatService
             SentAt = savedMessage.SentAt
         };
 
-        await _hubContext.Clients.Group(chatMessageDtoResult.Room!).SendAsync("ReceiveMessage", chatMessageDtoResult);
+        //await _hubContext.Clients.Group(chatMessageDtoResult.Room!).SendAsync("ReceiveMessage", chatMessageDtoResult);
+
+        //if (savedMessage.ReceiverId.HasValue)
+        //{
+
+        //    await _grpcNotificationClient.SendMessageNotificationAsync(
+        //        savedMessage.ReceiverId.Value,  
+        //        $"Вам пришло сообщение: {savedMessage.Text}",
+        //        savedMessage.Id
+        //    );
+        //}
 
         if (savedMessage.ReceiverId.HasValue)
         {
+            // personal messages
+            if (_connectionManager.TryGetConnection(savedMessage.ReceiverId.Value, out var connectionId))
+            {
+                await _hubContext.Clients.Client(connectionId)
+                    .SendAsync("ReceiveMessage", chatMessageDtoResult);
+            }
+
             await _grpcNotificationClient.SendMessageNotificationAsync(
                 savedMessage.ReceiverId.Value,
                 $"Вам пришло сообщение: {savedMessage.Text}",
                 savedMessage.Id
             );
         }
+        else
+        {
+            // group's messages
+            await _hubContext.Clients.Group(chatMessageDtoResult.Room!)
+                .SendAsync("ReceiveMessage", chatMessageDtoResult);
+        }
+
 
         return chatMessageDtoResult;
     }

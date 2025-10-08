@@ -32,6 +32,22 @@ public class NotificationService : INotificationService
         return true;
     }
 
+    public async Task<bool> SendMessageNotificationAsync(NotificationMessageDto notificationMessage)
+    {
+        var redisKey = $"notifications:user:{notificationMessage.UserId}";
+        var serialized = JsonSerializer.Serialize(notificationMessage);
+        await _redisDb.ListLeftPushAsync(redisKey, serialized);
+        return true;
+    }
+
+    public async Task<bool> SendTaskNotificationAsync(NotificationTaskDto notificationTaskDto)
+    {
+        var redisKey = $"notifications:user:{notificationTaskDto.UserId}";
+        var serialized = JsonSerializer.Serialize(notificationTaskDto);
+        await _redisDb.ListLeftPushAsync(redisKey, serialized);
+        return true;
+    }
+
     public async Task<IEnumerable<NotificationDto>> GetNotificationAsync(int userId)
     {
         var redisKey = $"notifications:user:{userId}";

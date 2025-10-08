@@ -1,6 +1,6 @@
 ﻿using ChatService.Protos;
 
-namespace TaskService.GrpcServices;
+namespace ChatService.GrpcServices;
 public class GrpcNotificationClientService
 {
     private readonly NotificationGrpc.NotificationGrpcClient _client;
