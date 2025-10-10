@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using ChatService.GrpcServices;
 using ChatService.ConnectionManager;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ChatService.Services;
 public class ChatService : IChatService
@@ -78,10 +79,14 @@ public class ChatService : IChatService
         if (savedMessage.ReceiverId.HasValue)
         {
             // personal messages
-            if (_connectionManager.TryGetConnection(savedMessage.ReceiverId.Value, out var connectionId))
+            if (_connectionManager.TryGetConnection(savedMessage.ReceiverId.Value, out var connectionIds))
             {
-                await _hubContext.Clients.Client(connectionId)
-                    .SendAsync("ReceiveMessage", chatMessageDtoResult);
+                foreach (var connectionId in connectionIds)
+                {
+                    await _hubContext.Clients.Client(connectionId)
+                        .SendAsync("ReceiveMessage", chatMessageDtoResult);
+
+                }
             }
 
             await _grpcNotificationClient.SendMessageNotificationAsync(
