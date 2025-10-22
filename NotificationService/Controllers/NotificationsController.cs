@@ -10,10 +10,12 @@ namespace NotificationService.Controllers;
 public class NotificationsController : ControllerBase
 {
     private readonly INotificationService _notificationService;
+    private readonly IEmailSenderService _emailSenderService;
 
-    public NotificationsController(INotificationService notificationService)
+    public NotificationsController(INotificationService notificationService, IEmailSenderService emailSenderService)
     {
         _notificationService = notificationService;
+        _emailSenderService = emailSenderService;
     }
 
     [HttpGet("{userId}")]
@@ -24,4 +26,22 @@ public class NotificationsController : ControllerBase
         var notifications = await _notificationService.GetNotificationAsync(userId);
         return Ok(notifications);
     }
+
+    [HttpPost("send-test-email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> SendTestEmail([FromQuery] string email)
+    {
+        if (string.IsNullOrEmpty(email))
+        {
+            return BadRequest("Email doesn't exist");
+        }
+
+        await _emailSenderService.SendEmailAsync(
+            email,
+            "Notification for users",
+            "Testing letter for checking SMTP's work");
+
+        return Ok("SMTP IS WORK");
+    }
+
 }

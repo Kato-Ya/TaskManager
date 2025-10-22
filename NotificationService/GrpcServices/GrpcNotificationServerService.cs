@@ -2,15 +2,24 @@
 using Notification.Protos;
 using NotificationService.Dto;
 using NotificationService.Interfaces;
+using NotificationService.GrpcServices;
+
 
 namespace NotificationService.GrpcServices;
 public class GrpcNotificationServerService : NotificationGrpc.NotificationGrpcBase
 {
     private readonly INotificationService _notificationService;
+    private readonly IEmailSenderService _emailSenderService;
+    private readonly GrpcUserClientService _grpcUserClientService;
 
-    public GrpcNotificationServerService(INotificationService notificationService)
+    public GrpcNotificationServerService(
+        INotificationService notificationService,
+        IEmailSenderService emailSenderService,
+        GrpcUserClientService grpcUserClientService)
     {
         _notificationService = notificationService;
+        _emailSenderService = emailSenderService;
+        _grpcUserClientService = grpcUserClientService;
     }
 
     //public override async Task<NotificationTaskResponse> SendTaskNotification(NotificationTaskRequest request,
@@ -32,6 +41,20 @@ public class GrpcNotificationServerService : NotificationGrpc.NotificationGrpcBa
             IsRead = false
         };
         var result = await _notificationService.SendTaskNotificationAsync(notificationTaskDto);
+
+        var user = _grpcUserClientService.GetUserByIdAsync(request.UserId);
+        if (!string.IsNullOrEmpty(user.Result.Email))
+        {
+            await _emailSenderService.SendEmailAsync(
+                user.Result.Email,
+                "Новая задача в Task Manager",
+                $"Здравствуйте, {user.Result.Username}!<br>" +
+                $"Вам назначена новая задача (ID: <b>{request.TaskId}</b>).<br>" +
+                $"Сообщение: <i>{request.Message}</i><br><br>" +
+                $"<a href='https://TaskManager/TaskList/{request.TaskId}'>Открыть задачу</a>"
+            );
+        }
+
         return new NotificationTaskResponse { Success = result };
     }
 
@@ -54,6 +77,21 @@ public class GrpcNotificationServerService : NotificationGrpc.NotificationGrpcBa
             IsRead = false
         };
         var result = await _notificationService.SendMessageNotificationAsync(notificationMessageDto);
+
+        var user = _grpcUserClientService.GetUserByIdAsync(request.UserId);
+
+        if (!string.IsNullOrEmpty(user.Result.Email))
+        {
+            await _emailSenderService.SendEmailAsync(
+                user.Result.Email,
+                "Новое сообщение в Task Manager",
+                $"Здравствуйте, {user.Result.Username}!<br>" +
+                $"Вам пришло сообщение (ID: <b>{request.MessageId}</b>).<br>" +
+                $"Сообщение: <i>{request.Message}</i><br><br>" +
+                $"<a href='https://TaskManager/Messanger/{request.MessageId}'>Открыть сообщения</a>"
+            );
+        }
+
         return new NotificationMessageResponse { Success = result };
     }
 
