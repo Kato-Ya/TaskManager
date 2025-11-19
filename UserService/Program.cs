@@ -31,6 +31,7 @@ builder.Services.AddGrpc();
 var app = builder.Build();
 
 app.MapGrpcService<GrpcUserServerService>();
+app.MapGrpcService<GrpcUserSessionServerService>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

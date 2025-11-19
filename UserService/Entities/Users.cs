@@ -29,4 +29,6 @@ public class Users
 
     //public ICollection<Roles?> Roles { get; set; } = new List< Roles>();
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public ICollection<UserSession> UserSession { get; set; } = new List<UserSession>();
+
 }

@@ -23,6 +23,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <Protobuf Include="Protos/user.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos/user_session.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

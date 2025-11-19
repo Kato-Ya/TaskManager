@@ -1,4 +1,5 @@
 ﻿using Ardalis.Specification;
+using ChatService.ConnectionManager;
 using ChatService.Services;
 using ChatService.Interfaces;
 using ChatService.Repositories;
@@ -10,6 +11,7 @@ public static class ServiceCollectionExtensions
     {
         //TODO: Verification comment
         services.AddScoped<IMessageService, MessageService>();
+        services.AddScoped<IConnectionManager, ConnectionManager.ConnectionManager>();
         //services.AddScoped(IChatService, Services.ChatService);
 
         services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryMessage<>));

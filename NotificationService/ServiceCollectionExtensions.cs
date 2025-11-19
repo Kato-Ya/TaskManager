@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddNotificationServices(this IServiceCollection services)
     {
         //TODO: Verification comment
-        services.AddScoped<INotificationService, INotificationService>();
+        //services.AddScoped<INotificationService, Services.NotificationService>();
         services.AddScoped<IEmailSenderService, EmailSenderService>();
 
         //services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryTask<>));

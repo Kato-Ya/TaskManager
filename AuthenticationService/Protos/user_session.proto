@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Authentication.Protos";
+
+package user;
+
+service UserSessionGrpc {
+	rpc SignInUserSession (UserSessionRequest) returns (UserSessionResponse);
+	rpc SignOutUserSession (UserIdSessionRequest) returns (UserSessionResponse);
+}
+
+message UserSessionRequest {
+	int32 userId = 1;
+	string ipAddress = 2;
+	string userAgent = 3;
+}
+
+message UserIdSessionRequest {
+	int32 userId = 1;
+}
+
+message UserSessionResponse {
+	bool success = 1;
+}
+

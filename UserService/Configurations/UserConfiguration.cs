@@ -50,5 +50,10 @@ public class UserConfiguration : IEntityTypeConfiguration<Users>
             .HasMany(u => u.UserRoles)
             .WithOne(ur => ur.User)
             .HasForeignKey(ur => ur.UserId);
+
+        builder
+            .HasMany(u => u.UserSession)
+            .WithOne(u => u.User)
+            .HasForeignKey(u => u.UserId);
     }
 }

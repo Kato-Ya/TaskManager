@@ -1,6 +1,8 @@
+using Authentication.Protos;
 using AuthenticationService;
 using AuthenticationService.GrpcServices;
 using AuthenticationService.Protos;
+using static Authentication.Protos.UserSessionGrpc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,14 @@ builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
     o.Address = new Uri("http://userservice:8080");
 });
 builder.Services.AddScoped<GrpcUserClientService>();
+
+builder.Services.AddGrpcClient<UserSessionGrpc.UserSessionGrpcClient>(o =>
+{
+    o.Address = new Uri("http://userservice:8080");
+});
+
+builder.Services.AddScoped<GrpcUserSessionClientService>();
+
 
 var configuration = builder.Configuration;
 

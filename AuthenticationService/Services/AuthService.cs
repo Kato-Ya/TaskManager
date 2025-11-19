@@ -1,11 +1,10 @@
 ﻿using Authentication.Protos;
 using AuthenticationService.GrpcServices;
 using AuthenticationService.Interfaces;
-using AuthenticationService.Repositories.TokenRepository;
 using AuthenticationService.TokenGenerator;
 using AuthenticationService.PasswordHasher;
 using Grpc.Core;
-using Microsoft.AspNetCore.Identity;
+using AuthenticationService.Models;
 
 namespace AuthenticationService.Services;
 public class AuthService : IAuthService
@@ -13,15 +12,18 @@ public class AuthService : IAuthService
     private readonly JwtTokensGenerator _jwtTokenGenerator;
     private readonly IPasswordHasher _passwordHasher;
     private readonly GrpcUserClientService _userClient;
+    private readonly GrpcUserSessionClientService _grpcUserSessionClient;
 
     public AuthService(
         JwtTokensGenerator jwtTokenGenerator,
         IPasswordHasher passwordHasher,
-        GrpcUserClientService userClient)
+        GrpcUserClientService userClient,
+        GrpcUserSessionClientService grpcUserSessionClient)
     {
         _jwtTokenGenerator = jwtTokenGenerator;
         _passwordHasher = passwordHasher;
         _userClient = userClient;
+        _grpcUserSessionClient = grpcUserSessionClient;
     }
 
     public async Task<AuthResponse> SignIn(SignInRequest request, ServerCallContext context)
@@ -31,6 +33,41 @@ public class AuthService : IAuthService
         if (user == null || _passwordHasher.IsPassowrdTrue(user.PasswordHash, request.Password))
         {
             throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid credentials"));
+        }
+
+        //var ipHeader = context.RequestHeaders.FirstOrDefault(h => h.Key == "x-forwarded-for");
+        //var ip = ipHeader?.Value
+        //         ?? context.Peer.Replace("ipv4:", "").Split(':').FirstOrDefault()
+        //         ?? "";
+
+        //var userAgent = context.RequestHeaders.FirstOrDefault(h => h.Key == "user-agent")?.Value ?? "";
+
+        //await _grpcUserSessionClient.SignInUserSessionAsync(user.Id, ip, userAgent);
+        string ip;
+        string userAgent;
+
+        if (context != null)
+        {
+            var ipHeader = context.RequestHeaders.FirstOrDefault(h => h.Key == "x-forwarded-for");
+            ip = ipHeader?.Value
+                 ?? context.Peer.Replace("ipv4:", "").Split(':').FirstOrDefault()
+                 ?? "";
+
+            userAgent = context.RequestHeaders.FirstOrDefault(h => h.Key == "user-agent")?.Value ?? "";
+        }
+        else
+        {
+            ip = "0.0.0.0";
+            userAgent = "HTTP_CLIENT";
+        }
+
+        try
+        {
+            await _grpcUserSessionClient.SignInUserSessionAsync(user.Id, ip, userAgent);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"gRPC session call failed: {ex.Message}");
         }
 
         var (accessToken, refreshToken) = await _jwtTokenGenerator.GenerateTokensAsync(user);
@@ -67,10 +104,50 @@ public class AuthService : IAuthService
 
     public async Task<SignOutResponse> SignOut(SignOutRequest request, ServerCallContext context)
     {
-        await _jwtTokenGenerator.InvalidateRefreshTokenAsync(request.RefreshToken);
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+
+        if (string.IsNullOrEmpty(request.RefreshToken))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "RefreshToken is null or empty"));
+
+        RefreshToken? refreshToken = null;
+        try
+        {
+            refreshToken = await _jwtTokenGenerator.ValidateRefreshTokenAsync(request.RefreshToken);
+        }
+        catch
+        {
+        }
+
+        if (refreshToken != null)
+        {
+            var userId = refreshToken.UserId;
+
+            try
+            {
+                if (_grpcUserSessionClient != null)
+                {
+                    await _grpcUserSessionClient.SignOutUserSessionAsync(userId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"gRPC session sign-out failed: {ex.Message}");
+            }
+
+            try
+            {
+                await _jwtTokenGenerator.InvalidateRefreshTokenAsync(request.RefreshToken);
+            }
+            catch
+            {
+            }
+        }
+
         return new SignOutResponse
         {
             Success = true
         };
     }
+
 }

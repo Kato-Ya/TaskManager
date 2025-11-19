@@ -18,11 +18,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IUserSessionService, UserSessionService>();
 
         services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryUser<>));
 
         //gRPC
         services.AddScoped<GrpcUserServerService>();
+        services.AddScoped<GrpcUserSessionServerService>();
 
         return services;
     }

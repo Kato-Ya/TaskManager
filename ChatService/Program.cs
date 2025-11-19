@@ -1,5 +1,6 @@
 using ChatService;
 using ChatService.Data;
+using ChatService.GrpcServices;
 using ChatService.Hubs;
 using ChatService.Interfaces;
 using ChatService.Protos;
@@ -7,7 +8,6 @@ using ChatService.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
-using TaskService.GrpcServices;
 
 var builder = WebApplication.CreateBuilder(args);
 

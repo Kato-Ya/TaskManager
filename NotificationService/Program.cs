@@ -26,6 +26,7 @@ builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 builder.Services.AddScoped<GrpcUserClientService>();
 
 builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
+builder.Services.AddScoped<INotificationService, NotificationService.Services.NotificationService>();
 
 
 var app = builder.Build();

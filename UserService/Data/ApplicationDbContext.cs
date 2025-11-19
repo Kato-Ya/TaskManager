@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Roles> Roles { get; set; } = null!;
     public DbSet<Users> Users { get; set; } = null!;
+    public DbSet<UserSession> UserSessions { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,6 +20,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+        modelBuilder.ApplyConfiguration(new UserSessionConfiguration());
 
         //modelBuilder.Entity<Roles>().ToTable("roles");
         //modelBuilder.Entity<Users>().ToTable("users");
