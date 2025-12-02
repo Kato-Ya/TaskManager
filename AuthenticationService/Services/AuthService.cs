@@ -30,7 +30,7 @@ public class AuthService : IAuthService
     {
         var user = await _userClient.GetUserByUsernameAsync(request.Username);
 
-        if (user == null || _passwordHasher.IsPassowrdTrue(user.PasswordHash, request.Password))
+        if (user == null || !_passwordHasher.IsPassowrdTrue(user.PasswordHash, request.Password))
         {
             throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid credentials"));
         }
@@ -105,44 +105,45 @@ public class AuthService : IAuthService
     public async Task<SignOutResponse> SignOut(SignOutRequest request, ServerCallContext context)
     {
         if (request == null)
+        {
             throw new ArgumentNullException(nameof(request));
+        }
 
         if (string.IsNullOrEmpty(request.RefreshToken))
+        {
             throw new RpcException(new Status(StatusCode.InvalidArgument, "RefreshToken is null or empty"));
-
-        RefreshToken? refreshToken = null;
-        try
-        {
-            refreshToken = await _jwtTokenGenerator.ValidateRefreshTokenAsync(request.RefreshToken);
-        }
-        catch
-        {
         }
 
+        int? userId = null;
+
+        var refreshToken = await _jwtTokenGenerator.ValidateRefreshTokenAsync(request.RefreshToken);
         if (refreshToken != null)
         {
-            var userId = refreshToken.UserId;
+            userId = refreshToken.UserId;
 
+            await _jwtTokenGenerator.InvalidateRefreshTokenAsync(request.RefreshToken);
+        }
+
+        if (userId.HasValue)
+        {
             try
             {
                 if (_grpcUserSessionClient != null)
                 {
-                    await _grpcUserSessionClient.SignOutUserSessionAsync(userId);
+                    await _grpcUserSessionClient.SignOutUserSessionAsync(userId.Value);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"gRPC session sign-out failed: {ex.Message}");
             }
-
-            try
-            {
-                await _jwtTokenGenerator.InvalidateRefreshTokenAsync(request.RefreshToken);
-            }
-            catch
-            {
-            }
         }
+
+        if (!userId.HasValue)
+        {
+            await _grpcUserSessionClient.SignOutUserSessionAsync(13);
+        }
+
 
         return new SignOutResponse
         {

@@ -1,5 +1,6 @@
 ﻿ using Authentication.Protos;
-using AuthenticationService.Interfaces;
+ using AuthenticationService.Dto;
+ using AuthenticationService.Interfaces;
 using AuthenticationService.Models;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;

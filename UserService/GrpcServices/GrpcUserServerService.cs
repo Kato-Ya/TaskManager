@@ -37,6 +37,7 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt.ToString("O"),
+            PasswordHash = user.PasswordHash
         };
     }
 
@@ -55,6 +56,7 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt.ToString("O"),
+            PasswordHash = user.PasswordHash
         };
     }
 }

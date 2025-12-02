@@ -16,7 +16,7 @@ message UserSessionRequest {
 }
 
 message UserIdSessionRequest {
-	int32 userId = 1;
+	int32 userId = 1;	
 }
 
 message UserSessionResponse {

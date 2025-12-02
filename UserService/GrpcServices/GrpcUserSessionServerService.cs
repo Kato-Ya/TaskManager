@@ -30,7 +30,17 @@ public class GrpcUserSessionServerService : UserSessionGrpc.UserSessionGrpcBase
     public override async Task<UserSessionResponse> SignOutUserSession(UserIdSessionRequest request,
         ServerCallContext context)
     {
-        await _userSessionService.SignOutUserSessionAsync(request.UserId);
-        return new UserSessionResponse { Success = true };
+        try
+        {
+            await _userSessionService.SignOutUserSessionAsync(request.UserId);
+            return new UserSessionResponse { Success = true };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[GrpcServer error] {ex}");
+            throw new RpcException(
+                new Status(StatusCode.Internal, $"SignOutUserSession failed: {ex.Message}")
+            );
+        }
     }
 }

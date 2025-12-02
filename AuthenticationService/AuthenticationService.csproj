@@ -26,7 +26,7 @@
     <Folder Include="Data\" />
     <Folder Include="Dto\" />-->
     <Protobuf Include="Protos\user.proto" GrpcServices="Client" />
-    <Protobuf Include="Protos\authentication.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\authentication.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\user_session.proto" GrpcServices="Client" />
   </ItemGroup>
 

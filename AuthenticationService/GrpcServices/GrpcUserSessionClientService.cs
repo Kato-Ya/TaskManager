@@ -1,4 +1,4 @@
-﻿using Authentication.Protos;
+﻿using UserService.Protos;
 
 namespace AuthenticationService.GrpcServices;
 public class GrpcUserSessionClientService

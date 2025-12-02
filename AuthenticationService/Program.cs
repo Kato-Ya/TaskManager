@@ -1,8 +1,9 @@
 using Authentication.Protos;
 using AuthenticationService;
 using AuthenticationService.GrpcServices;
-using AuthenticationService.Protos;
-using static Authentication.Protos.UserSessionGrpc;
+//using AuthenticationService.Protos;
+using UserService.Protos;
+//using static Authentication.Protos.UserSessionGrpc;
 
 var builder = WebApplication.CreateBuilder(args);
 

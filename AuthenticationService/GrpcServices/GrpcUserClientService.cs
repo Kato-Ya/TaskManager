@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
-using AuthenticationService.Protos;
+//using AuthenticationService.Protos;
 using AuthenticationService.Dto;
+using UserService.Protos;
 
 namespace AuthenticationService.GrpcServices;
 public class GrpcUserClientService
@@ -23,7 +24,9 @@ public class GrpcUserClientService
                 Id = response.Id,
                 Username = response.Username,
                 Email = response.Email,
-                CreatedAt = DateTime.Parse(response.CreatedAt)
+                CreatedAt = DateTime.Parse(response.CreatedAt),
+                PasswordHash = response.PasswordHash
+
             };
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
@@ -42,7 +45,8 @@ public class GrpcUserClientService
                 Id = response.Id,
                 Username = response.Username,
                 Email = response.Email,
-                CreatedAt = DateTime.Parse(response.CreatedAt)
+                CreatedAt = DateTime.Parse(response.CreatedAt),
+                PasswordHash = response.PasswordHash
             };
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
