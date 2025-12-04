@@ -1,6 +1,6 @@
 ﻿using TaskService.Dto;
 using Grpc.Core;
-using TaskService.Protos;
+using UserService.Protos;
 
 namespace TaskService.GrpcServices;
 public class GrpcUserClientService

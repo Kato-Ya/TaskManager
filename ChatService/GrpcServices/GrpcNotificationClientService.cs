@@ -1,4 +1,4 @@
-﻿using ChatService.Protos;
+﻿using NotificationService.Protos;
 
 namespace ChatService.GrpcServices;
 public class GrpcNotificationClientService

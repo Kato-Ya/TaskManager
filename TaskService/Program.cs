@@ -5,8 +5,9 @@ using TaskService.Interfaces;
 using TaskService;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
-using TaskService.Protos;
+using NotificationService.Protos;
 using TaskService.GrpcServices;
+using UserService.Protos;
 
 
 var builder = WebApplication.CreateBuilder(args);

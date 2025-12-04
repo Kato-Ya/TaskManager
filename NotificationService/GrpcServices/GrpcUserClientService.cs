@@ -1,7 +1,6 @@
 ﻿using Grpc.Core;
-using Notification.Protos;
-using Notification.Protos;
 using NotificationService.Dto;
+using UserService.Protos;
 
 namespace NotificationService.GrpcServices;
 public class GrpcUserClientService

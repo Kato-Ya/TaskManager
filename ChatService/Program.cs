@@ -3,10 +3,12 @@ using ChatService.Data;
 using ChatService.GrpcServices;
 using ChatService.Hubs;
 using ChatService.Interfaces;
-using ChatService.Protos;
+//using ChatService.Protos;
+using UserService.Protos;
 using ChatService.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using NotificationService.Protos;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);

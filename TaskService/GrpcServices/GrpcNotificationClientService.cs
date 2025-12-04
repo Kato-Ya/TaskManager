@@ -1,4 +1,4 @@
-﻿using TaskService.Protos;
+﻿using NotificationService.Protos;
 
 namespace TaskService.GrpcServices;
 public class GrpcNotificationClientService

@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Notification.Protos;
 using NotificationService;
 using NotificationService.GrpcServices;
 using NotificationService.Interfaces;
 using NotificationService.Services;
 using StackExchange.Redis;
+using UserService.Protos;
 
 var builder = WebApplication.CreateBuilder(args);
 

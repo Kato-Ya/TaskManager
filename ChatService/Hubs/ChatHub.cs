@@ -2,7 +2,6 @@
 using ChatService.Interfaces;
 using ChatService.Dto;
 using ChatService.GrpcServices;
-using ChatService.Protos;
 using ChatService.Services;
 using Microsoft.AspNetCore.SignalR;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;

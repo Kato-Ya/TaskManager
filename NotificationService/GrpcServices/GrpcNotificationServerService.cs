@@ -1,5 +1,5 @@
 ﻿using Grpc.Core;
-using Notification.Protos;
+using NotificationService.Protos;
 using NotificationService.Dto;
 using NotificationService.Interfaces;
 using NotificationService.GrpcServices;

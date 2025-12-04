@@ -1,6 +1,6 @@
 ﻿using ChatService.Dto;
 using Grpc.Core;
-using ChatService.Protos;
+using UserService.Protos;
 
 namespace ChatService.Services;
 public class GrpcUserClientService
