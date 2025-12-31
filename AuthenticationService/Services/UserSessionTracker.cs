@@ -1,17 +1,14 @@
 ﻿using AuthenticationService.GrpcServices;
 using AuthenticationService.Interfaces;
 using Grpc.Core;
-using System.Reflection.PortableExecutable;
 
 namespace AuthenticationService.Services;
 public class UserSessionTracker : IUserSessionTracker
 {
-    private readonly IUserSessionTracker _userSessionTracker;
     private readonly GrpcUserSessionClientService _grpcUserSessionClient;
 
-    public UserSessionTracker(IUserSessionTracker userSessionTracker, GrpcUserSessionClientService grpcUserSessionClient)
+    public UserSessionTracker(GrpcUserSessionClientService grpcUserSessionClient)
     {
-        _userSessionTracker = userSessionTracker;
         _grpcUserSessionClient  = grpcUserSessionClient;
     }
 

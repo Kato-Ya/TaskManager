@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPasswordHasher, PasswordHasher.PasswordHasher>();
         services.AddScoped<IJwtRefreshTokenRepository, JwtRefreshTokenRepository>();
+        services.AddScoped<IUserSessionTracker, UserSessionTracker>();
         services.AddScoped<JwtTokensGenerator>();
 
         //services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryMessage<>));

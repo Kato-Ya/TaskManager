@@ -97,20 +97,20 @@ services:
      ports:
         - "8025:8025"   # web-app
         - "1025:1025"   # smtp-port
-  # frontend:
-  #     build:
-  #       context: ./TMApp
-  #       dockerfile: Dockerfile
-  #     ports:
-  #       - "3005:3005"
-  #     networks:
-  #       - app-network
-  #     depends_on:
-  #       - userservice
-  #       - taskservice
-  #       - notificationservice
-  #       - chatservice
-  #       - authservice
+  frontend:
+      build:
+        context: ../TMApp
+        dockerfile: Dockerfile
+      ports:
+        - "3005:3000"
+      networks:
+        - app-network
+      depends_on:
+        - userservice
+        - taskservice
+        - notificationservice
+        - chatservice
+        - authservice
 
 volumes:
   postgres_data:
