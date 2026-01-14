@@ -15,6 +15,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// CORS setting
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .WithOrigins("http://localhost:3005")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -45,8 +57,10 @@ builder.Services.AddScoped<IChatService, ChatService.Services.ChatService>();
 builder.Services.AddScoped<GrpcUserClientService>();
 builder.Services.AddScoped<GrpcNotificationClientService>();
 builder.Services.AddMessageServices();
+
 var app = builder.Build();
 
+app.UseCors("AllowAll");
 
 app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
 {

@@ -1,6 +1,8 @@
 using Authentication.Protos;
 using AuthenticationService;
 using AuthenticationService.GrpcServices;
+using System.Text.Json;
+
 //using AuthenticationService.Protos;
 using UserService.Protos;
 //using static Authentication.Protos.UserSessionGrpc;
@@ -9,7 +11,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+// CORS Setting
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .WithOrigins("http://localhost:3005")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+        );
+});
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -35,6 +54,8 @@ var configuration = builder.Configuration;
 
 var app = builder.Build();
 
+app.UseCors("AllowAll");
+
 app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
 {
     var user = await clientUserService.GetUserByIdAsync(1);
@@ -43,7 +64,7 @@ app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{
+{   
     app.UseSwagger();
     app.UseSwaggerUI();
 }

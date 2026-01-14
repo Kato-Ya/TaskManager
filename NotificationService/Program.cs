@@ -10,6 +10,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// CORS setting
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .WithOrigins("http://localhost:3005")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -30,6 +42,8 @@ builder.Services.AddScoped<INotificationService, NotificationService.Services.No
 
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 app.MapGrpcService<GrpcNotificationServerService>();
 app.MapControllers();

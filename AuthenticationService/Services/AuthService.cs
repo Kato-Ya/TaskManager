@@ -38,41 +38,6 @@ public class AuthService : IAuthService
             throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid credentials"));
         }
 
-        ////var ipHeader = context.RequestHeaders.FirstOrDefault(h => h.Key == "x-forwarded-for");
-        ////var ip = ipHeader?.Value
-        ////         ?? context.Peer.Replace("ipv4:", "").Split(':').FirstOrDefault()
-        ////         ?? "";
-
-        ////var userAgent = context.RequestHeaders.FirstOrDefault(h => h.Key == "user-agent")?.Value ?? "";
-
-        ////await _grpcUserSessionClient.SignInUserSessionAsync(user.Id, ip, userAgent);
-        //string ip;
-        //string userAgent;
-
-        //if (context != null)
-        //{
-        //    var ipHeader = context.RequestHeaders.FirstOrDefault(h => h.Key == "x-forwarded-for");
-        //    ip = ipHeader?.Value
-        //         ?? context.Peer.Replace("ipv4:", "").Split(':').FirstOrDefault()
-        //         ?? "";
-
-        //    userAgent = context.RequestHeaders.FirstOrDefault(h => h.Key == "user-agent")?.Value ?? "";
-        //}
-        //else
-        //{
-        //    ip = "0.0.0.0";
-        //    userAgent = "HTTP_CLIENT";
-        //}
-
-        //try
-        //{
-        //    await _grpcUserSessionClient.SignInUserSessionAsync(user.Id, ip, userAgent);
-        //}
-        //catch (Exception ex)
-        //{
-        //    Console.WriteLine($"gRPC session call failed: {ex.Message}");
-        //}
-
         await _userSessionTracker.TrackUserSignInAsync(user.Id, context);
 
         var (accessToken, refreshToken) = await _jwtTokenGenerator.GenerateTokensAsync(user);

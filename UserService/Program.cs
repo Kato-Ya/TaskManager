@@ -13,6 +13,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add services to the container.
 
+// CORS Setting
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .WithOrigins("http://localhost:3005")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
@@ -29,6 +41,8 @@ builder.Services.AddGrpc();
 
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 app.MapGrpcService<GrpcUserServerService>();
 app.MapGrpcService<GrpcUserSessionServerService>();
