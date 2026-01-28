@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
         policy => policy
-            .WithOrigins("http://localhost:3005")
+            .WithOrigins("http://localhost:3005", "http://localhost:3000")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
@@ -64,7 +64,7 @@ app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{   
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }

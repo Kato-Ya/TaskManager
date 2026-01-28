@@ -1,11 +1,11 @@
-﻿ using Authentication.Protos;
- using AuthenticationService.Dto;
- using AuthenticationService.Interfaces;
+﻿using Authentication.Protos;
+using AuthenticationService.Dto;
+using AuthenticationService.Interfaces;
 using AuthenticationService.Models;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-    
+
 namespace AuthenticationService.Controller;
 
 [Route("api/auth")]
@@ -23,12 +23,18 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
+    public async Task<ActionResult<AuthHttpResponse>> SignIn([FromBody] SignInRequest request)
     {
         try
         {
             var response = await _authService.SignIn(request, null!);
-            return Ok(response);
+            //return Ok(response);
+            return Ok(new AuthHttpResponse
+            {
+                AccessToken = response.AccessToken,
+                RefreshToken = response.RefreshToken,
+                ExpiresIn = response.ExpiresIn
+            });
         }
         catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.Unauthenticated)
         {
