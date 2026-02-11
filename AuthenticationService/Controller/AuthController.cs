@@ -23,18 +23,18 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<AuthHttpResponse>> SignIn([FromBody] SignInRequest request)
+    public async Task<ActionResult> SignIn([FromBody] SignInRequest request)
     {
         try
         {
             var response = await _authService.SignIn(request, null!);
-            //return Ok(response);
-            return Ok(new AuthHttpResponse
-            {
-                AccessToken = response.AccessToken,
-                RefreshToken = response.RefreshToken,
-                ExpiresIn = response.ExpiresIn
-            });
+            return Ok(response);
+            //return Ok(new AuthHttpResponse
+            //{
+            //    AccessToken = response.AccessToken,
+            //    RefreshToken = response.RefreshToken,
+            //    ExpiresIn = response.ExpiresIn
+            //});
         }
         catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.Unauthenticated)
         {
