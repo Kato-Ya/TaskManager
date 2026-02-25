@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Dto;
 using UserService.Entities;
@@ -35,6 +36,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto)
     {
@@ -48,6 +50,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateUser([FromBody] UserDto userDto, int id)
@@ -62,6 +65,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteUser(int userId)

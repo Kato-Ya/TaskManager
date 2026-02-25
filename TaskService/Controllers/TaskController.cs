@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TaskService.Dto;
@@ -19,6 +20,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet("{taskId}")]
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTaskById(int taskId)
@@ -28,6 +30,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet]
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTaskList()
     {
@@ -36,6 +39,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOrManager")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateTask([FromBody] TaskDto taskDto)
     {
@@ -63,6 +67,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteTask(int taskId)
@@ -72,6 +77,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpPost("{taskId}/assign/{userId}")]
+    [Authorize(Policy = "AdminOrManager")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> AssignUserToTask(int userId, int taskId)
     {

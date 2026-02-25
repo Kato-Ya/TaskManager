@@ -2,8 +2,11 @@
 //using AuthenticationService.Protos;
 using AuthenticationService.Dto;
 using UserService.Protos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AuthenticationService.GrpcServices;
+
+[AllowAnonymous]
 public class GrpcUserClientService
 {
     private readonly UserGrpc.UserGrpcClient _client;
@@ -25,8 +28,8 @@ public class GrpcUserClientService
                 Username = response.Username,
                 Email = response.Email,
                 CreatedAt = DateTime.Parse(response.CreatedAt),
-                PasswordHash = response.PasswordHash
-
+                PasswordHash = response.PasswordHash,
+                Roles = response.Roles.ToList()
             };
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
@@ -46,7 +49,8 @@ public class GrpcUserClientService
                 Username = response.Username,
                 Email = response.Email,
                 CreatedAt = DateTime.Parse(response.CreatedAt),
-                PasswordHash = response.PasswordHash
+                PasswordHash = response.PasswordHash,
+                Roles = response.Roles.ToList()
             };
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)

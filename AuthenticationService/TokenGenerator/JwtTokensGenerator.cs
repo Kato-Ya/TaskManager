@@ -35,6 +35,10 @@ public class JwtTokensGenerator : IJwtTokensGenerator
             new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
         };
         //claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+        foreach (var role in userInfo.Roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],

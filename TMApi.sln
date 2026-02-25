@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatService", "ChatService\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService", "AuthenticationService\AuthenticationService.csproj", "{DDD470CE-AB2F-4730-9D28-56B184295A56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Auth", "Common.Auth\Common.Auth.csproj", "{98114B48-5C02-493E-8833-F0D1CDB11123}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,9 +46,16 @@ Global
 		{DDD470CE-AB2F-4730-9D28-56B184295A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDD470CE-AB2F-4730-9D28-56B184295A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDD470CE-AB2F-4730-9D28-56B184295A56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98114B48-5C02-493E-8833-F0D1CDB11123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98114B48-5C02-493E-8833-F0D1CDB11123}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98114B48-5C02-493E-8833-F0D1CDB11123}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98114B48-5C02-493E-8833-F0D1CDB11123}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{98114B48-5C02-493E-8833-F0D1CDB11123} = {30A5525C-515C-4DA3-9858-E74021B815E7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {31095110-91D8-44AF-8D44-A88ECD31F1A7}

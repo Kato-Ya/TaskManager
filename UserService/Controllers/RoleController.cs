@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Dto;
 using UserService.Interfaces;
@@ -35,6 +36,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateRole([FromBody] RoleDto roleDto)
     {
@@ -48,6 +50,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateRole([FromBody] RoleDto roleDto, int id)
@@ -62,6 +65,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteRole(int roleId)

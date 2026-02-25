@@ -1,6 +1,9 @@
-﻿using UserService.Protos;
+﻿using Microsoft.AspNetCore.Authorization;
+using UserService.Protos;
 
 namespace AuthenticationService.GrpcServices;
+
+[AllowAnonymous]
 public class GrpcUserSessionClientService
 {
     private readonly UserSessionGrpc.UserSessionGrpcClient _client;

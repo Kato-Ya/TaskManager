@@ -6,8 +6,11 @@ using UserService.Protos;
 using Microsoft.EntityFrameworkCore;
 using Ardalis.Specification;
 using UserService.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UserService.GrpcServices;
+
+[AllowAnonymous]
 public class GrpcUserServerService : UserGrpc.UserGrpcBase
 {
     //private readonly ApplicationDbContext _dbContext;
@@ -18,6 +21,7 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
         //_dbContext = dbContext;
         _usersRepository = repository;
     }
+
 
     public override async Task<UserResponse> GetUserById(UserIdRequest request, ServerCallContext callContext)
     {
@@ -37,7 +41,8 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt.ToString("O"),
-            PasswordHash = user.PasswordHash
+            PasswordHash = user.PasswordHash,
+            Roles = { user.UserRoles.Select(ur => ur.Role.Name) }
         };
     }
 
@@ -56,7 +61,8 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt.ToString("O"),
-            PasswordHash = user.PasswordHash
+            PasswordHash = user.PasswordHash,
+            Roles = { user.UserRoles.Select(ur => ur.Role.Name) }
         };
     }
 }

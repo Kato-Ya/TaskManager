@@ -10,5 +10,7 @@ public class UserDto
 
     //public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
+    public List<string> Roles { get; set; } = new();
+
     //public ICollection<Roles?> Roles { get; set; } = new List<Roles?>();
 }

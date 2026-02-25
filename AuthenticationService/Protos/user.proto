@@ -23,4 +23,5 @@ message UserResponse {
   string email = 3;
   string createdAt = 4;
   string passwordHash = 5;
+  repeated string roles = 6;
 }

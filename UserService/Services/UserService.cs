@@ -36,7 +36,7 @@ public class UserService : IUserService
         var user = new Users
         {
             Username = createUserDto.Username,
-            Email = createUserDto.Email,
+            Email = createUserDto.Email,    
             PasswordHash = passwordHash,
             CreatedAt = createUserDto.CreatedAt,
             State = createUserDto.State
