@@ -1,15 +1,19 @@
-using Authentication.Protos;
+using System.Security.Claims;
+using System.Text;
 using AuthenticationService;
 using AuthenticationService.GrpcServices;
 using System.Text.Json;
-
-//using AuthenticationService.Protos;
+using Common.Auth;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using UserService.Protos;
-//using static Authentication.Protos.UserSessionGrpc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// JWTBearer setting
+builder.Services.AddJwtAuth(builder.Configuration);
 
 // CORS Setting
 builder.Services.AddCors(options =>
@@ -71,6 +75,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

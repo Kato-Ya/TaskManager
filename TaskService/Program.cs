@@ -5,12 +5,16 @@ using TaskService.Interfaces;
 using TaskService;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
+using Common.Auth;
 using NotificationService.Protos;
 using TaskService.GrpcServices;
 using UserService.Protos;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// JWTBearer setting
+builder.Services.AddJwtAuth(builder.Configuration);
 
 // CORS setting
 builder.Services.AddCors(options =>
@@ -72,6 +76,7 @@ app.MapGet("/notification", async (GrpcNotificationClientService clientService) 
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

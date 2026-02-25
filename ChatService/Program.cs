@@ -6,6 +6,7 @@ using ChatService.Interfaces;
 //using ChatService.Protos;
 using UserService.Protos;
 using ChatService.Services;
+using Common.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NotificationService.Protos;
@@ -14,6 +15,9 @@ using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// JWTBearer setting
+builder.Services.AddJwtAuth(builder.Configuration);
 
 // CORS setting
 builder.Services.AddCors(options =>
@@ -86,6 +90,7 @@ app.MapHub<ChatHub>("/chatHub");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

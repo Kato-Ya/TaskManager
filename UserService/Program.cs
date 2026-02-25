@@ -1,6 +1,7 @@
 using UserService;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
+using Common.Auth;
 using Microsoft.EntityFrameworkCore;
 using UserService.Data;
 using UserService.GrpcServices;
@@ -12,6 +13,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 // Add services to the container.
+
+// JWTBearer setting
+builder.Services.AddJwtAuth(builder.Configuration);
 
 // CORS Setting
 builder.Services.AddCors(options =>
@@ -56,6 +60,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

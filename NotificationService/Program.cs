@@ -1,3 +1,4 @@
+using Common.Auth;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using NotificationService;
 using NotificationService.GrpcServices;
@@ -9,6 +10,9 @@ using UserService.Protos;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// JWTBearer setting
+builder.Services.AddJwtAuth(builder.Configuration);
 
 // CORS setting
 builder.Services.AddCors(options =>
@@ -64,6 +68,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

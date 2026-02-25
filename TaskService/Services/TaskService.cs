@@ -16,16 +16,48 @@ public class TaskService : ITaskService
 {
     private readonly IRepositoryBase<Tasks> _repository;
     private readonly GrpcNotificationClientService _grpcNotificationClientService;
-    public TaskService(IRepositoryBase<Tasks> repository, GrpcNotificationClientService grpcNotificationClientService)
+    private readonly GrpcUserClientService _grpcUserClientService;
+    public TaskService(IRepositoryBase<Tasks> repository, GrpcNotificationClientService grpcNotificationClientService, GrpcUserClientService grpcUserClientService)
     {
         _repository = repository;
         _grpcNotificationClientService = grpcNotificationClientService;
+        _grpcUserClientService = grpcUserClientService;
     }
 
-    public async Task<IEnumerable<Tasks>> GetAllTasksAsync()
+    //public async Task<IEnumerable<Tasks>> GetAllTasksAsync()
+    //{
+    //    return await _repository.ListAsync(new TaskGetAllSpecification());
+    //}
+    public async Task<IEnumerable<TaskResponseDto>> GetAllTasksAsync()
     {
-        return await _repository.ListAsync(new TaskGetAllSpecification());
+        var tasks = await _repository.ListAsync(new TaskGetAllSpecification());
+
+        var result =  new List<TaskResponseDto>();
+
+        foreach (var task in tasks)
+        {
+            string? assigneeName = null;
+
+            if (task.AssigneeId.HasValue)
+            {
+                var user = await _grpcUserClientService.GetUserByIdAsync(task.AssigneeId.Value);
+                assigneeName = user.Username;
+            }
+            result.Add(new TaskResponseDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Status = task.Status,
+                Priority = task.Priority,
+                AssigneeId = task.AssigneeId,
+                AssigneeName = assigneeName
+            });
+        }
+        return result;
     }
+
+
     public async Task<Tasks?> GetTaskByIdAsync(int taskId)
     {
         return await _repository.FirstOrDefaultAsync(new TaskGetByIdSpecification(taskId));

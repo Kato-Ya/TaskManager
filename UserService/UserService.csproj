@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <ProjectReference Include="..\Common.Auth\Common.Auth.csproj" />
     <Protobuf Include="Protos/user.proto" GrpcServices="Server" />
     <Protobuf Include="Protos/user_session.proto" GrpcServices="Server" />
   </ItemGroup>

@@ -1,8 +1,11 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using UserService.Interfaces;
 using UserService.Protos;
 
 namespace UserService.GrpcServices;
+
+[AllowAnonymous]
 public class GrpcUserSessionServerService : UserSessionGrpc.UserSessionGrpcBase
 {
     private readonly IUserSessionService _userSessionService;

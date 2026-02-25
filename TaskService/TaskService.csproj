@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common.Auth\Common.Auth.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Protobuf Include="Protos\user.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\notification.proto" GrpcServices="Client" />
   </ItemGroup>

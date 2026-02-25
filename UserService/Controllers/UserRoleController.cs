@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UserService.Dto;
 using UserService.Entities;
 using UserService.Interfaces;
@@ -35,6 +36,7 @@ public class UserRoleController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteUserRole(int id)
@@ -44,6 +46,7 @@ public class UserRoleController : ControllerBase
     }
 
     [HttpPost("{userId}/roles")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> AssignRoles(int userId, [FromBody] List<int> roleIds)
     {
@@ -52,6 +55,7 @@ public class UserRoleController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateUsersRoles([FromBody] UserRoleDto userRoleDto, int userRoleId)
