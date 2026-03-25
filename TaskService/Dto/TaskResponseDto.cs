@@ -7,6 +7,6 @@ public class TaskResponseDto
     public string Status { get; set; }
     public string Priority { get; set; }
 
-    public int? AssigneeId { get; set; }
+    //public int? AssigneeId { get; set; }
     public string? AssigneeName { get; set; }
 }

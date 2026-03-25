@@ -30,9 +30,12 @@ public class Tasks
 
     public int CreatorId { get; set; }
 
-    public int? AssigneeId { get; set; }
+    //public int? AssigneeId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? DueDate { get; set; }
+
+    public ICollection<TaskUser> TaskUsers { get; set; } = new List<TaskUser>();
+
 }

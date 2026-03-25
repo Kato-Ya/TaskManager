@@ -18,11 +18,10 @@ public class TaskConfiguration : IEntityTypeConfiguration<Tasks>
         builder.Property(x => x.Status).HasColumnName("status").HasMaxLength(20).HasDefaultValue("Pending");
         builder.Property(x => x.Priority).HasColumnName("priority").HasMaxLength(20).HasDefaultValue("Medium");
         builder.Property(x => x.CreatorId).HasColumnName("creator_id").IsRequired();
-        builder.Property(x => x.AssigneeId).HasColumnName("assignee_id");
+        //builder.Property(x => x.AssigneeId).HasColumnName("assignee_id");
         builder.Property(x => x.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
         builder.Property(x => x.DueDate).HasColumnName("due_date");
 
-        
         //builder.HasOne<Users>()
         //    .WithMany()
         //    .HasForeignKey(x => x.CreatorId)
@@ -32,5 +31,10 @@ public class TaskConfiguration : IEntityTypeConfiguration<Tasks>
         //    .WithMany()
         //    .HasForeignKey(x => x.AssigneeId)
         //    .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasMany(x => x.TaskUsers)
+            .WithOne(x => x.Task)
+            .HasForeignKey(x => x.TaskId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
