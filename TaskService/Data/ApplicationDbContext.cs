@@ -11,10 +11,12 @@ public class ApplicationDbContext : DbContext
     : base(options) { }
 
     public DbSet<Tasks> Tasks { get; set; } = null!;
+    public DbSet<TaskUser> TaskUser { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new TaskConfiguration());
+        modelBuilder.ApplyConfiguration(new TaskUserConfiguration());
     }
 }

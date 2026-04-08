@@ -1,7 +1,7 @@
 ﻿using Ardalis.Specification;
 using TaskService.Entities;
 
-namespace TaskService.TaskSpecifications;
+namespace TaskService.Specifications.TaskSpecifications;
 
 public class TaskGetAllSpecification : Specification<Tasks>
 {

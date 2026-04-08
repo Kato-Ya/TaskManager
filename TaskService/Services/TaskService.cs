@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskService.Data;
 using TaskService.Dto;
 using TaskService.Entities;
-using TaskService.TaskSpecifications;
+using TaskService.Specifications.TaskSpecifications;
 using Ardalis.Specification;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -38,11 +38,11 @@ public class TaskService : ITaskService
         {
             string? assigneeName = null;
 
-            if (task.AssigneeId.HasValue)
-            {
-                var user = await _grpcUserClientService.GetUserByIdAsync(task.AssigneeId.Value);
-                assigneeName = user.Username;
-            }
+            //if (task.AssigneeId.HasValue)
+            //{
+            //    var user = await _grpcUserClientService.GetUserByIdAsync(task.AssigneeId.Value);
+            //    assigneeName = user.Username;
+            //}
             result.Add(new TaskResponseDto
             {
                 Id = task.Id,
@@ -50,7 +50,7 @@ public class TaskService : ITaskService
                 Description = task.Description,
                 Status = task.Status,
                 Priority = task.Priority,
-                AssigneeId = task.AssigneeId,
+                //AssigneeId = task.AssigneeId,
                 AssigneeName = assigneeName
             });
         }
@@ -116,28 +116,28 @@ public class TaskService : ITaskService
         return true;
     }
 
-    public async Task<Tasks> AssignUserToTaskAsync(int userId, int taskId)
-    {
-        var task = await _repository.FirstOrDefaultAsync(new TaskGetByIdSpecification(taskId));
+    //public async Task<Tasks> AssignUserToTaskAsync(int userId, int taskId)
+    //{
+    //    var task = await _repository.FirstOrDefaultAsync(new TaskGetByIdSpecification(taskId));
 
-        if (task == null)
-        {
-            throw new ArgumentException("Task not found!");
-        }
+    //    if (task == null)
+    //    {
+    //        throw new ArgumentException("Task not found!");
+    //    }
 
-        if (task.AssigneeId == userId)
-        {
-            return task;
-        }
+    //    if (task.AssigneeId == userId)
+    //    {
+    //        return task;
+    //    }
 
-        task.AssigneeId = userId;
-        await _repository.UpdateAsync(task);
+    //    task.AssigneeId = userId;
+    //    await _repository.UpdateAsync(task);
 
-        await _grpcNotificationClientService.SendTaskNotificationAsync(
-            userId,
-            $"Вы назначены на задачу: {task.Title}",
-            task.Id);
+    //    await _grpcNotificationClientService.SendTaskNotificationAsync(
+    //        userId,
+    //        $"Вы назначены на задачу: {task.Title}",
+    //        task.Id);
 
-        return task;
-    }
+    //    return task;
+    //}
 }
