@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
     {
         //TODO: Verification comment
         services.AddScoped<ITaskService, Services.TaskService>();
+        services.AddScoped<ITaskUserService, Services.TaskUserService>();
 
         services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryTask<>));
 

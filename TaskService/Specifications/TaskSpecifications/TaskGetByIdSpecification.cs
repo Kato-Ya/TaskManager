@@ -1,8 +1,7 @@
 ﻿using Ardalis.Specification;
-using System.Threading.Tasks;
 using TaskService.Entities;
 
-namespace TaskService.TaskSpecifications;
+namespace TaskService.Specifications.TaskSpecifications;
 public class TaskGetByIdSpecification : Specification<Tasks>
 {
     public TaskGetByIdSpecification(int taskId)

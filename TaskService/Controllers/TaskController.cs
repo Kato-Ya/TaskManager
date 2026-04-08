@@ -76,13 +76,15 @@ public class TaskController : ControllerBase
         return Ok(deletedTask);
     }
 
-    [HttpPost("{taskId}/assign/{userId}")]
-    [Authorize(Policy = "AdminOrManager")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> AssignUserToTask(int userId, int taskId)
-    {
-        var task = await _taskService.AssignUserToTaskAsync(userId, taskId);
-        return Ok(task);
-    }
+    //[HttpPost("{taskId}/assign/{userId}")]
+    ////[Authorize(Policy = "AdminOrManager")]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //public async Task<IActionResult> AssignUserToTask(
+    //    [FromRoute] int taskId,
+    //    [FromRoute] int userId)
+    //{
+    //    var task = await _taskService.AssignUserToTaskAsync(userId, taskId);
+    //    return Ok(task);
+    //}
 
 }

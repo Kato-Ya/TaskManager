@@ -80,7 +80,6 @@ create table if not exists tasks
     priority    varchar(20) not null default 'Medium',
 
     creator_id  integer not null,
-    assignee_id integer,
 
     created_at  timestamptz not null default current_timestamp,
     due_date    timestamptz,
@@ -88,17 +87,10 @@ create table if not exists tasks
     constraint fk_tasks_creator
         foreign key (creator_id)
         references users (id),
-
-    constraint fk_tasks_assignee
-        foreign key (assignee_id)
-        references users (id)
 );
 
 create index if not exists ix_tasks_creator_id
     on tasks (creator_id);
-
-create index if not exists ix_tasks_assignee_id
-    on tasks (assignee_id);
 	
 	
 
@@ -123,3 +115,23 @@ create index idx_chat_message_user_id
     on chat_message (user_id);
 
 
+
+create table if not exists task_assignments
+(
+    id       serial primary key,
+    task_id  integer not null,
+    user_id  integer not null,
+
+    constraint fk_task_assignments_task
+        foreign key (task_id)
+        references tasks (id)
+        on delete cascade,
+
+    constraint uq_task_assignments unique (task_id, user_id)
+);
+
+create index ix_task_assignments_task_id
+    on task_assignments(task_id);
+
+create index ix_task_assignments_user_id
+    on task_assignments(user_id);
