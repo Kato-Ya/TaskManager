@@ -2,7 +2,7 @@
 
 option csharp_namespace = "UserService.Protos";
 
-package notification;
+package user;
 
 service UserGrpc {
   rpc GetUserById (UserIdRequest) returns (UserResponse);

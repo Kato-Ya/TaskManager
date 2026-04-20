@@ -43,17 +43,18 @@ public class GrpcNotificationServerService : NotificationGrpc.NotificationGrpcBa
         var result = await _notificationService.SendTaskNotificationAsync(notificationTaskDto);
 
         var user = _grpcUserClientService.GetUserByIdAsync(request.UserId);
-        if (!string.IsNullOrEmpty(user.Result.Email))
-        {
-            await _emailSenderService.SendEmailAsync(
-                user.Result.Email,
-                "Новая задача в Task Manager",
-                $"Здравствуйте, {user.Result.Username}!<br>" +
-                $"Вам назначена новая задача (ID: <b>{request.TaskId}</b>).<br>" +
-                $"Сообщение: <i>{request.Message}</i><br><br>" +
-                $"<a href='https://TaskManager/TaskList/{request.TaskId}'>Открыть задачу</a>"
-            );
-        }
+        //if (!string.IsNullOrEmpty(user.Result.Email))
+        //if (user != null && !string.IsNullOrEmpty(user.Email))
+        //{
+        //    await _emailSenderService.SendEmailAsync(
+        //        user.Result.Email,
+        //        "Новая задача в Task Manager",
+        //        $"Здравствуйте, {user.Result.Username}!<br>" +
+        //        $"Вам назначена новая задача (ID: <b>{request.TaskId}</b>).<br>" +
+        //        $"Сообщение: <i>{request.Message}</i><br><br>" +
+        //        $"<a href='https://TaskManager/TaskList/{request.TaskId}'>Открыть задачу</a>"
+        //    );
+        //}
 
         return new NotificationTaskResponse { Success = result };
     }
@@ -80,17 +81,18 @@ public class GrpcNotificationServerService : NotificationGrpc.NotificationGrpcBa
 
         var user = _grpcUserClientService.GetUserByIdAsync(request.UserId);
 
-        if (!string.IsNullOrEmpty(user.Result.Email))
-        {
-            await _emailSenderService.SendEmailAsync(
-                user.Result.Email,
-                "Новое сообщение в Task Manager",
-                $"Здравствуйте, {user.Result.Username}!<br>" +
-                $"Вам пришло сообщение (ID: <b>{request.MessageId}</b>).<br>" +
-                $"Сообщение: <i>{request.Message}</i><br><br>" +
-                $"<a href='https://TaskManager/Messanger/{request.MessageId}'>Открыть сообщения</a>"
-            );
-        }
+        //if (!string.IsNullOrEmpty(user.Result.Email))
+        //if (user != null && !string.IsNullOrEmpty(user.Email))
+        //{
+        //    await _emailSenderService.SendEmailAsync(
+        //        user.Result.Email,
+        //        "Новое сообщение в Task Manager",
+        //        $"Здравствуйте, {user.Result.Username}!<br>" +
+        //        $"Вам пришло сообщение (ID: <b>{request.MessageId}</b>).<br>" +
+        //        $"Сообщение: <i>{request.Message}</i><br><br>" +
+        //        $"<a href='https://TaskManager/Messanger/{request.MessageId}'>Открыть сообщения</a>"
+        //    );
+        //}
 
         return new NotificationMessageResponse { Success = result };
     }
