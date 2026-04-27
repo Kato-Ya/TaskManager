@@ -21,9 +21,8 @@ public class TaskUserController : ControllerBase
     {
         _taskUserService = taskUserService;
     }
-
+    [Authorize(Policy = "AdminOrManager")]
     [HttpPost("{taskId}/assign/{userId}")]
-    //[Authorize(Policy = "AdminOrManager")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> AssignUser(int taskId, int userId)
     {
@@ -31,6 +30,7 @@ public class TaskUserController : ControllerBase
         return Ok(assignUsertoTask);
     }
 
+    [Authorize(Policy = "AdminOrManager")]
     [HttpDelete("{taskId}/assign/{userId}")]
     public async Task<IActionResult> RemoveUser(int taskId, int userId)
     {
