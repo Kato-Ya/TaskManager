@@ -14,6 +14,7 @@ public class JwtRefreshTokenRepository : IJwtRefreshTokenRepository
     public async Task<RefreshToken?> GetByIdAsync(string id)
     {
         await Task.CompletedTask;
+        Console.WriteLine($"INSTANCE: {Environment.ProcessId}");
         if (_memoryCache.TryGetValue(id, out var token))
         {
             if (token != null)
@@ -35,12 +36,16 @@ public class JwtRefreshTokenRepository : IJwtRefreshTokenRepository
     {
         await Task.CompletedTask;
         var token = await GetByIdAsync(refreshToken.Id);
+        Console.WriteLine($"REFRESH TOKEN FOUND: {token != null}");
+        Console.WriteLine($"INSTANCE: {Environment.ProcessId}");
         if (token != null)
         {
             await DeleteAsync(refreshToken);
         }
 
-        _memoryCache.Set(refreshToken.Id, refreshToken, new DateTimeOffset(refreshToken.ExpiresIn, TimeSpan.Zero));
+        _memoryCache.Set(refreshToken.Id, refreshToken,
+        //new DateTimeOffset(refreshToken.ExpiresIn, TimeSpan.Zero));
+        DateTimeOffset.FromUnixTimeSeconds(refreshToken.ExpiresIn));
     }
 
     public async Task DeleteAsync(RefreshToken refreshToken)

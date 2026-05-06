@@ -74,6 +74,7 @@ public class JwtTokensGenerator : IJwtTokensGenerator
     public async Task InvalidateRefreshTokenAsync(string refreshTokenId)
     {
         var token = await _refreshTokenRepository.GetByIdAsync(refreshTokenId);
+        Console.WriteLine($"REFRESH TOKEN FOUND: {token != null}");
         if (token != null)
         {
             await _refreshTokenRepository.DeleteAsync(token);

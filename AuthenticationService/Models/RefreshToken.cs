@@ -15,5 +15,6 @@ public class RefreshToken
     public int UserId { get; set; }
     public string GrantType { get; set; } = null!;
     public long ExpiresIn { get; set; }
-    public bool IsExpired => DateTime.Now > new DateTime(ExpiresIn);
+    //public bool IsExpired => DateTime.Now > new DateTime(ExpiresIn);
+    public bool IsExpired => DateTimeOffset.UtcNow.ToUnixTimeSeconds() > ExpiresIn;
 }
