@@ -7,4 +7,6 @@ public class CreateUserDto
     public string Password { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
     public string State { get; set; } = null!;
+    public List<int> RoleIds { get; set; } = new();
+
 }

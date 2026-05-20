@@ -68,9 +68,9 @@ public class UserController : ControllerBase
     [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteUser(int userId)
+    public async Task<IActionResult> DeleteUser(int id)
     {
-        var deletedUser = await _userService.DeleteUserAsync(userId);
+        var deletedUser = await _userService.DeleteUserAsync(id);
         return Ok(deletedUser);
     }
 }

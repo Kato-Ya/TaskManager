@@ -46,23 +46,56 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
         };
     }
 
-    public override async Task<UserResponse> GetUserByName(UserNameRequest request, ServerCallContext callContext)
+    public override async Task<UserResponse> GetUserByName(
+        UserNameRequest request,
+        ServerCallContext callContext)
     {
-        var user = await _usersRepository.FirstOrDefaultAsync(new UserGetByNameSpecification(request.Username));
-
-        if (user == null)
+        try
         {
-            throw new RpcException(new Status(StatusCode.NotFound, $"User with name {request.Username} not found"));
+            var user = await _usersRepository.FirstOrDefaultAsync(
+                new UserGetByNameSpecification(request.Username));
+
+            if (user == null)
+            {
+                throw new RpcException(
+                    new Status(StatusCode.NotFound,
+                        $"User with name {request.Username} not found"));
+            }
+
+            Console.WriteLine($"User found: {user.Username}");
+
+            Console.WriteLine($"UserRoles null?: {user.UserRoles == null}");
+
+            if (user.UserRoles != null)
+            {
+                foreach (var ur in user.UserRoles)
+                {
+                    Console.WriteLine($"Role is null: {ur.Role == null}");
+                    Console.WriteLine($"Role name: {ur.Role?.Name}");
+                }
+            }
+
+            return new UserResponse
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt.ToString("O"),
+                PasswordHash = user.PasswordHash,
+                Roles =
+                {
+                    user.UserRoles
+                        .Where(ur => ur.Role != null)
+                        .Select(ur => ur.Role.Name)
+                }
+            };
         }
-
-        return new UserResponse
+        catch (Exception ex)
         {
-            Id = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            CreatedAt = user.CreatedAt.ToString("O"),
-            PasswordHash = user.PasswordHash,
-            Roles = { user.UserRoles.Select(ur => ur.Role.Name) }
-        };
+            Console.WriteLine("=== EXCEPTION ===");
+            Console.WriteLine(ex.ToString());
+
+            throw;
+        }
     }
 }
