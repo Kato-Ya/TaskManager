@@ -13,21 +13,73 @@ namespace UserService.Services;
 public class UserService : IUserService
 {
     private readonly IRepositoryBase<Users> _repository;
+    private readonly IRepositoryBase<UserRole> _userRoleRepository;
     private readonly IPasswordHasher _passwordHasher;
-    public UserService(IRepositoryBase<Users> repository, IPasswordHasher passwordHasher)
+    public UserService(IRepositoryBase<Users> repository, IPasswordHasher passwordHasher, IRepositoryBase<UserRole> userRoleRepository)
     {
         _repository = repository;
         _passwordHasher = passwordHasher;
+        _userRoleRepository = userRoleRepository;
     }
 
-    public async Task<IEnumerable<Users>> GetAllUsersAsync()
+    //public async Task<IEnumerable<Users>> GetAllUsersAsync()
+    //{
+    //    return await _repository.ListAsync(new UserGetAllSpecification());
+    //}
+
+    public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync()
     {
-        return await _repository.ListAsync(new UserGetAllSpecification());
+        var userList = await _repository.ListAsync(new UserGetAllSpecification());
+
+        return userList.Select(user => new UserResponseDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            State = user.State,
+            CreatedAt = user.CreatedAt,
+
+            Roles = user.UserRoles
+                .Select(ur => new RoleDto
+                {
+                    Id = ur.Role.Id,
+                    Name = ur.Role.Name,
+                    Description = ur.Role.Description
+                })
+                .ToList()
+        });
     }
 
-    public async Task<Users?> GetByIdUserAsync(int userId)
+    //public async Task<Users?> GetByIdUserAsync(int userId)
+    //{
+    //    return await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
+    //}
+
+    public async Task<UserResponseDto?> GetByIdUserAsync(int userId)
     {
-        return await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
+        var user = await _repository.FirstOrDefaultAsync(
+            new UserGetByIdSpecification(userId));
+
+        if (user == null)
+            return null;
+
+        return new UserResponseDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            State = user.State,
+            CreatedAt = user.CreatedAt,
+
+            Roles = user.UserRoles
+                .Select(ur => new RoleDto
+                {
+                    Id = ur.Role.Id,
+                    Name = ur.Role.Name,
+                    Description = ur.Role.Description
+                })
+                .ToList()
+        };
     }
 
     public async Task<Users> CreateUserAsync(CreateUserDto createUserDto)
@@ -42,7 +94,21 @@ public class UserService : IUserService
             State = createUserDto.State
         };
 
-        return await _repository.AddAsync(user);
+        await _repository.AddAsync(user);
+        await _repository.SaveChangesAsync();
+
+        foreach (var roleId in createUserDto.RoleIds.Distinct())
+        {
+            await _userRoleRepository.AddAsync(new UserRole
+            {
+                UserId = user.Id,
+                RoleId = roleId
+            });
+        }
+
+        await _userRoleRepository.SaveChangesAsync();
+
+        return user;
     }
 
     public async Task<Users> UpdateUserAsync(UserDto userDto)

@@ -8,6 +8,7 @@ using UserService.Specifications.UserRoleSpecifications;
 using Ardalis.Specification;
 using System.Threading.Tasks;
 using UserService.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace UserService.Services;
 public class UserRoleService : IUserRoleService
@@ -31,7 +32,7 @@ public class UserRoleService : IUserRoleService
         return await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleId));
     }
 
-    public async Task AssignRolesAsync(int userId, List<int> roleIds)
+    public async Task AssignRolesAsync(int userId, [FromBody] List<int> roleIds)
     {
         var user = await _repositoryUser.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
 
@@ -40,15 +41,18 @@ public class UserRoleService : IUserRoleService
             throw new ArgumentException("User did not found");
         }
 
-        foreach (var roleId in roleIds)
-        {
-            var userRole = new UserRole
+        var existingUser = await _repository.ListAsync(new UserRoleByUserIdSpecification(userId));
+        await _repository.DeleteRangeAsync(existingUser);
+
+        var newRoles = roleIds
+            .Distinct()
+            .Select(roleId => new UserRole
             {
                 UserId = userId,
                 RoleId = roleId
-            };
-            await _repository.AddAsync(userRole);
-        }
+            });
+
+        await _repository.AddRangeAsync(newRoles);
 
         await _repository.SaveChangesAsync();
     }

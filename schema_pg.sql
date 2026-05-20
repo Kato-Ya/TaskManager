@@ -64,6 +64,9 @@ create table if not exists user_roles
     constraint uq_user_roles unique (user_id, role_id)
 );
 
+alter table user_roles
+    add constraint uq_user_role unique (user_id, role_id);
+
 create index if not exists ix_user_roles_user_id
     on user_roles (user_id);
 
