@@ -1,14 +1,18 @@
-﻿using Ardalis.Specification;
+using Ardalis.Specification;
 using UserService.Entities;
 
 namespace UserService.Specifications.UserSessionSpecifications;
+
 public class UserSessionGetAllSpecification : Specification<UserSession>
 {
-    public UserSessionGetAllSpecification()
+    public UserSessionGetAllSpecification(bool activeOnly = false)
     {
-        //Query.OrderByDescending(userSession => userSession.Id);
-        Query.Where(s => s.IsActive)
-            .Include(s => s.User)
-            .OrderByDescending(userSession => userSession.Id);
+        Query.Include(s => s.User)
+            .OrderByDescending(userSession => userSession.SigninTime);
+
+        if (activeOnly)
+        {
+            Query.Where(s => s.IsActive);
+        }
     }
 }

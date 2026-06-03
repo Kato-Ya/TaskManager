@@ -53,8 +53,31 @@ public class UserSessionService : IUserSessionService
         }
     }
 
-    public async Task<IEnumerable<UserSession>> GetListActiveSessionAsync()
+    public async Task<IEnumerable<UserSessionDto>> GetSessionsAsync(bool activeOnly = false)
     {
-        return await _repository.ListAsync(new UserSessionGetAllSpecification());
+        var sessions = await _repository.ListAsync(new UserSessionGetAllSpecification(activeOnly));
+        return sessions.Select(UserSessionToDto);
+    }
+
+    public async Task<IEnumerable<UserSessionDto>> GetUserSessionsAsync(int userId, bool activeOnly = false)
+    {
+        var sessions = await _repository.ListAsync(new UserSessionGetByUserIdSpecification(userId, activeOnly));
+        return sessions.Select(UserSessionToDto);
+    }
+
+    private static UserSessionDto UserSessionToDto(UserSession session)
+    {
+        return new UserSessionDto
+        {
+            Id = session.Id,
+            UserId = session.UserId,
+            Username = session.User.Username,
+            Email = session.User.Email,
+            SignInTime = session.SigninTime,
+            SignOutTime = session.SignoutTime,
+            IpAddress = session.IpAddress,
+            UserAgent = session.UserAgent,
+            IsActive = session.IsActive
+        };
     }
 }
