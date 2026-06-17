@@ -366,3 +366,4 @@ FodyWeavers.xsd
 /NotificationService/appsettings.Development.json
 /ChatService/appsettings.Development.json
 /AuthenticationService/appsettings.Development.json
+/docker-compose.override.yml

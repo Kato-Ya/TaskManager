@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Security.Claims;
 using ChatService.Dto;
 using ChatService.Entities;
 using ChatService.Hubs;
@@ -79,19 +80,15 @@ public class ChatService : IChatService
         if (savedMessage.ReceiverId.HasValue)
         {
             // personal messages
-            if (_connectionManager.TryGetConnection(savedMessage.ReceiverId.Value, out var connectionIds))
+            await SendToUserConnectionsAsync(savedMessage.SenderId, chatMessageDtoResult);
+            if (savedMessage.ReceiverId.Value != savedMessage.SenderId)
             {
-                foreach (var connectionId in connectionIds)
-                {
-                    await _hubContext.Clients.Client(connectionId)
-                        .SendAsync("ReceiveMessage", chatMessageDtoResult);
-
-                }
+                await SendToUserConnectionsAsync(savedMessage.ReceiverId.Value, chatMessageDtoResult);
             }
 
             await _grpcNotificationClient.SendMessageNotificationAsync(
                 savedMessage.ReceiverId.Value,
-                $"Вам пришло сообщение: {savedMessage.Text}",
+                $"You have received a message: {savedMessage.Text}",
                 savedMessage.Id
             );
         }
@@ -104,5 +101,19 @@ public class ChatService : IChatService
 
 
         return chatMessageDtoResult;
+    }
+
+    private async Task SendToUserConnectionsAsync(int userId, ChatMessageDto message)
+    {
+        if (!_connectionManager.TryGetConnection(userId, out var connectionIds))
+        {
+            return;
+        }
+
+        foreach (var connectionId in connectionIds.Distinct())
+        {
+            await _hubContext.Clients.Client(connectionId)
+                .SendAsync("ReceiveMessage", message);
+        }
     }
 }

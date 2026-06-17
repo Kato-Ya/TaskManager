@@ -23,4 +23,8 @@ public class MessageService : IMessageService
         return await _repository.ListAsync(new MessageGetByRoomSpecification(room, take));
     }
 
+    public async Task<IEnumerable<ChatMessage>> GetConversationMessagesAsync(int userId, int otherUserId, int take = 50)
+    {
+        return await _repository.ListAsync(new MessageGetConversationSpecification(userId, otherUserId, take));
+    }
 }

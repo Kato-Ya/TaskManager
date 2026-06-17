@@ -4,26 +4,20 @@ namespace ChatService.ConnectionManager;
 public class ConnectionManager : IConnectionManager
 {
     //matching the UserId <--> connectionId
-    private readonly ConcurrentDictionary<int, HashSet<string>> _connections = new();
+    private readonly ConcurrentDictionary<int, ConcurrentDictionary<string, byte>> _connections = new();
 
     public void AddConnection(int userId, string connectionId)
     {
-        _connections.AddOrUpdate(
-            userId, _ => new HashSet<string> {connectionId}, (_, existing) =>
-        {
-            existing.Add(connectionId);
-            return existing;
-        });
+        var userConnections = _connections.GetOrAdd(userId, _ => new ConcurrentDictionary<string, byte>());
+        userConnections.TryAdd(connectionId, 0);
     }
 
     public void RemoveConnection(string connectionId)
     {
         foreach (var (userId, connections) in _connections)
         {
-            if (connections.Contains(connectionId))
+            if (connections.TryRemove(connectionId, out _))
             {
-                connections.Remove(connectionId);
-
                 if (connections.Count == 0)
                 {
                     _connections.TryRemove(userId, out _);
@@ -37,7 +31,7 @@ public class ConnectionManager : IConnectionManager
     {
         if (_connections.TryGetValue(userId, out var connectionSet))
         {
-            connectionIds = connectionSet;
+            connectionIds = connectionSet.Keys;
             return true;
         }
 

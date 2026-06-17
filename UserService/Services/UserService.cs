@@ -5,6 +5,7 @@ using UserService.Dto;
 using UserService.Entities;
 using UserService.Specifications.UserSpecifications;
 using UserService.Specifications.UserRoleSpecifications;
+using UserService.Specifications.UserSessionSpecifications;
 using Ardalis.Specification;
 using System.Threading.Tasks;
 using UserService.PasswordWorker;
@@ -14,12 +15,18 @@ public class UserService : IUserService
 {
     private readonly IRepositoryBase<Users> _repository;
     private readonly IRepositoryBase<UserRole> _userRoleRepository;
+    private readonly IRepositoryBase<UserSession> _userSessionRepository;
     private readonly IPasswordHasher _passwordHasher;
-    public UserService(IRepositoryBase<Users> repository, IPasswordHasher passwordHasher, IRepositoryBase<UserRole> userRoleRepository)
+    public UserService(
+        IRepositoryBase<Users> repository,
+        IPasswordHasher passwordHasher,
+        IRepositoryBase<UserRole> userRoleRepository,
+        IRepositoryBase<UserSession> userSessionRepository)
     {
         _repository = repository;
         _passwordHasher = passwordHasher;
         _userRoleRepository = userRoleRepository;
+        _userSessionRepository = userSessionRepository;
     }
 
     //public async Task<IEnumerable<Users>> GetAllUsersAsync()
@@ -141,6 +148,14 @@ public class UserService : IUserService
         if (user == null)
         {
             throw new ArgumentException("User did not found");
+        }
+
+        var userSessions = await _userSessionRepository.ListAsync(
+            new UserSessionGetByUserIdSpecification(userId));
+
+        if (userSessions.Any())
+        {
+            await _userSessionRepository.DeleteRangeAsync(userSessions);
         }
 
         await _repository.DeleteAsync(user);

@@ -4,6 +4,7 @@ using ChatService.Hubs;
 using ChatService.Entities;
 using ChatService.Dto;
 using ChatService.Interfaces;
+using System.Security.Claims;
 
 namespace ChatService.Controllers;
 
@@ -11,28 +12,41 @@ namespace ChatService.Controllers;
 [ApiController]
 public class MessagesController : ControllerBase
 {
-    private readonly IMessageService _messageService;
-    private readonly IChatService _chatService;
+    private readonly IChatMessageService _chatMessageService;
 
-    public MessagesController(IMessageService messageService, IChatService chartService)
+    public MessagesController(IChatMessageService chatMessageService)
     {
-        _messageService = messageService;
-        _chatService = chartService;
+        _chatMessageService = chatMessageService;
     }
 
     [HttpGet("room/{room}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetRoomMessages(string room, [FromQuery] int take = 50)
     {
-        var messages = await _messageService.GetMessagesByRoomAsync(room, take);
+        var messages = await _chatMessageService.GetMessagesByRoomAsync(room, take);
         return Ok(messages);
+    }
+
+    [HttpGet("conversation/{otherUserId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetConversationMessages(int otherUserId, [FromQuery] int take = 50)
+    {
+        var result = await _chatMessageService.GetConversationMessagesAsync(User, otherUserId, take);
+        if (result is null)
+        {
+            return Unauthorized();
+        }
+
+        return Ok(result);
     }
 
     [HttpPost("sendMessage")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> SendMessage([FromBody] CreateChatMessageDto message)
     {
-        var savedMessage = await _chatService.SendMessageAsync(message);
+
+        var savedMessage = await _chatMessageService.SendMessageAsync(User, message);
         return Ok(savedMessage);
     }
 }
