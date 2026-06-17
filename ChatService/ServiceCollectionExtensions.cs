@@ -11,7 +11,8 @@ public static class ServiceCollectionExtensions
     {
         //TODO: Verification comment
         services.AddScoped<IMessageService, MessageService>();
-        services.AddScoped<IConnectionManager, ConnectionManager.ConnectionManager>();
+        services.AddScoped<IChatMessageService, ChatMessageService>();
+        services.AddSingleton<IConnectionManager, ConnectionManager.ConnectionManager>();
         //services.AddScoped(IChatService, Services.ChatService);
 
         services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryMessage<>));

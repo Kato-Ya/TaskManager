@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Collections.Concurrent;
 using ChatService.ConnectionManager;
+using System.Security.Claims;
 
 namespace ChatService.Hubs;
 public class ChatHub : Hub
@@ -32,14 +33,24 @@ public class ChatHub : Hub
 
     public async Task SendMessage(CreateChatMessageDto createChatMessageDto)
     {
+        var userId = GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            throw new HubException("User is not authenticated");
+        }
+
+        createChatMessageDto.SenderId = userId.Value;
         await _chatService.SendMessageAsync(createChatMessageDto);
     }
 
     public override async Task OnConnectedAsync()
     {
-        //await base.OnConnectedAsync();
-        var userId = int.Parse(Context.GetHttpContext()!.Request.Query["userId"]!);
-        _connectionManager.AddConnection(userId, Context.ConnectionId);
+        var userId = GetCurrentUserId();
+        if (userId.HasValue)
+        {
+            _connectionManager.AddConnection(userId.Value, Context.ConnectionId);
+        }
+
         await base.OnConnectedAsync();
     }
 
@@ -57,5 +68,14 @@ public class ChatHub : Hub
     public Task LeaveRoom(string room)
     {
         return Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
+    }
+
+    private int? GetCurrentUserId()
+    {
+        var userIdValue = Context.User?.FindFirstValue(ClaimTypes.NameIdentifier) ??
+            Context.User?.FindFirstValue("sub") ??
+            Context.GetHttpContext()?.Request.Query["userId"].ToString();
+
+        return int.TryParse(userIdValue, out var userId) ? userId : null;
     }
 }
