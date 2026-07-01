@@ -52,6 +52,11 @@ public class NotificationService : INotificationService
     {
         var redisKey = $"notifications:user:{userId}";
         var items = await _redisDb.ListRangeAsync(redisKey);
-        return items.Select(i => JsonSerializer.Deserialize<NotificationDto>(i));
+        return items
+            .Select(i => i.ToString())
+            .Where(json => !string.IsNullOrWhiteSpace(json))
+            .Select(json => JsonSerializer.Deserialize<NotificationDto>(json))
+            .Where(notification => notification is not null)
+            .Select(notification => notification!);
     }
 }

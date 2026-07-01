@@ -33,11 +33,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddNotificationServices();
 
 builder.Services.AddGrpc(); 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("Redis")); // Redis!!!!! redis:6379 localhost
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis")
+    ?? throw new InvalidOperationException("ConnectionStrings:Redis is not configured.");
+var userServiceGrpcAddress = builder.Configuration["Grpc:UserService"]
+    ?? throw new InvalidOperationException("Grpc:UserService is not configured.");
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+    ConnectionMultiplexer.Connect(redisConnectionString));
 
 builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 {
-    o.Address = new Uri("http://userservice:8080");
+    o.Address = new Uri(userServiceGrpcAddress);
 });
 builder.Services.AddScoped<GrpcUserClientService>();
 
@@ -50,14 +56,7 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 
 app.MapGrpcService<GrpcNotificationServerService>();
-app.MapControllers();
 app.MapGet("/NotificationService", () => "~NotificationService is running~");
-
-app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
-{
-    var user = await clientUserService.GetUserByIdAsync(1);
-    return user is not null ? $"User: {user.Username} with id: {user.Id} " : "User not found";
-});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

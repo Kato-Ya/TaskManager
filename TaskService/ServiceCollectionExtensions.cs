@@ -1,6 +1,5 @@
 ﻿using TaskService.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using TaskService.Interfaces;
 using Ardalis.Specification.EntityFrameworkCore;
 using Ardalis.Specification;
 using TaskService.Repositories;

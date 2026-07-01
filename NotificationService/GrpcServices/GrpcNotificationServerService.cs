@@ -42,7 +42,6 @@ public class GrpcNotificationServerService : NotificationGrpc.NotificationGrpcBa
         };
         var result = await _notificationService.SendTaskNotificationAsync(notificationTaskDto);
 
-        var user = _grpcUserClientService.GetUserByIdAsync(request.UserId);
         //if (!string.IsNullOrEmpty(user.Result.Email))
         //if (user != null && !string.IsNullOrEmpty(user.Email))
         //{
@@ -78,8 +77,6 @@ public class GrpcNotificationServerService : NotificationGrpc.NotificationGrpcBa
             IsRead = false
         };
         var result = await _notificationService.SendMessageNotificationAsync(notificationMessageDto);
-
-        var user = _grpcUserClientService.GetUserByIdAsync(request.UserId);
 
         //if (!string.IsNullOrEmpty(user.Result.Email))
         //if (user != null && !string.IsNullOrEmpty(user.Email))

@@ -32,16 +32,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
+var userServiceGrpcAddress = builder.Configuration["Grpc:UserService"]
+    ?? throw new InvalidOperationException("Grpc:UserService is not configured.");
+var notificationServiceGrpcAddress = builder.Configuration["Grpc:NotificationService"]
+    ?? throw new InvalidOperationException("Grpc:NotificationService is not configured.");
 
 builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 {
-    o.Address = new Uri("http://userservice:8080");
+    o.Address = new Uri(userServiceGrpcAddress);
 });
 builder.Services.AddScoped<GrpcUserClientService>();
 
 builder.Services.AddGrpcClient<NotificationGrpc.NotificationGrpcClient>(o =>
 {
-    o.Address = new Uri("http://notificationservice:8080");
+    o.Address = new Uri(notificationServiceGrpcAddress);
 });
 builder.Services.AddScoped<GrpcNotificationClientService>();
 
@@ -61,18 +65,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
-
-app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
-{
-    var user = await clientUserService.GetUserByIdAsync(1);
-    return user is not null ? $"User: {user.Username} with id: {user.Id} " : "User not found";
-});
-
-app.MapGet("/notification", async (GrpcNotificationClientService clientService) =>
-{
-    var notification = await clientService.SendTaskNotificationAsync(1, "message", 1);
-    return notification;
-});
 
 app.UseHttpsRedirection();
 
