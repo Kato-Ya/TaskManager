@@ -70,9 +70,9 @@ public class TaskController : ControllerBase
     [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteTask(int taskId)
+    public async Task<IActionResult> DeleteTask(int id)
     {
-        var deletedTask= await _taskService.DeleteTaskAsync(taskId);
+        var deletedTask= await _taskService.DeleteTaskAsync(id);
         return Ok(deletedTask);
     }
 

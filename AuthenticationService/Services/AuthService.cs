@@ -59,6 +59,11 @@ public class AuthService : IAuthService
         }
 
         var userInfo = await _userClient.GetUserByIdAsync(refreshToken.UserId);
+        if (userInfo == null)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
+        }
+
         var (accessToken, newRefreshToken) = await _jwtTokenGenerator.GenerateTokensAsync(userInfo);
 
         //remove old token

@@ -1,13 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskService.Interfaces;
-using TaskService.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using TaskService.Dto;
-using TaskService.Entities;
-using TaskService.Interfaces;
 
 namespace TaskService.Controllers;
 

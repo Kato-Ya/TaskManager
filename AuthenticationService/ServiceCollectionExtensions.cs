@@ -1,10 +1,8 @@
 ﻿using Ardalis.Specification;
-using Ardalis.Specification;
 using AuthenticationService.Services;
 using AuthenticationService.Interfaces;
 using AuthenticationService.TokenGenerator;
 using AuthenticationService.PasswordHasher;
-using Microsoft.AspNetCore.Identity;
 using AuthenticationService.Repositories.TokenRepository;
 
 namespace AuthenticationService;

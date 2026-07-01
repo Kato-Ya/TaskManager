@@ -12,7 +12,7 @@ public class GrpcUserClientService
         _client = client;
     }
 
-    public async Task<UserDto> GetUserByIdAsync(int userId)
+    public async Task<UserDto?> GetUserByIdAsync(int userId)
     {
         try
         {

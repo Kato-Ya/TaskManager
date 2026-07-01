@@ -40,21 +40,28 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var configuration = builder.Configuration;
+var redisConnectionString = configuration.GetConnectionString("Redis")
+    ?? throw new InvalidOperationException("ConnectionStrings:Redis is not configured.");
+var userServiceGrpcAddress = configuration["Grpc:UserService"]
+    ?? throw new InvalidOperationException("Grpc:UserService is not configured.");
+var notificationServiceGrpcAddress = configuration["Grpc:NotificationService"]
+    ?? throw new InvalidOperationException("Grpc:NotificationService is not configured.");
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("Redis")); // Redis!!!!! redis:6379 localhost
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+    ConnectionMultiplexer.Connect(redisConnectionString));
 
 // SignalR + Redis backplane
 builder.Services.AddSignalR()
-    .AddStackExchangeRedis(configuration.GetConnectionString("Redis")); //Redis
+    .AddStackExchangeRedis(redisConnectionString);
 
 builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 {
-    o.Address = new Uri("http://userservice:8080");
+    o.Address = new Uri(userServiceGrpcAddress);
 });
 
 builder.Services.AddGrpcClient<NotificationGrpc.NotificationGrpcClient>(o =>
 {
-    o.Address = new Uri("http://notificationservice:8080");
+    o.Address = new Uri(notificationServiceGrpcAddress);
 });
 
 builder.Services.AddScoped<IChatService, ChatService.Services.ChatService>();
@@ -65,12 +72,6 @@ builder.Services.AddMessageServices();
 var app = builder.Build();
 
 app.UseCors("AllowAll");
-
-app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
-{
-    var user = await clientUserService.GetUserByIdAsync(1);
-    return user is not null ? $"User: {user.Username} with id: {user.Id} " : "User not found";
-});
 
 //Keep tracking
 //using (var scope = app.Services.CreateScope())

@@ -40,15 +40,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 builder.Services.AddAuthServices();
 
+var userServiceGrpcAddress = builder.Configuration["Grpc:UserService"]
+    ?? throw new InvalidOperationException("Grpc:UserService is not configured.");
+
 builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 {
-    o.Address = new Uri("http://userservice:8080");
+    o.Address = new Uri(userServiceGrpcAddress);
 });
 builder.Services.AddScoped<GrpcUserClientService>();
 
 builder.Services.AddGrpcClient<UserSessionGrpc.UserSessionGrpcClient>(o =>
 {
-    o.Address = new Uri("http://userservice:8080");
+    o.Address = new Uri(userServiceGrpcAddress);
 });
 
 builder.Services.AddScoped<GrpcUserSessionClientService>();
@@ -59,12 +62,6 @@ var configuration = builder.Configuration;
 var app = builder.Build();
 
 app.UseCors("AllowAll");
-
-app.MapGet("/user", async (GrpcUserClientService clientUserService) =>
-{
-    var user = await clientUserService.GetUserByIdAsync(1);
-    return user is not null ? $"User: {user.Username} with id: {user.Id} " : "User not found";
-});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
