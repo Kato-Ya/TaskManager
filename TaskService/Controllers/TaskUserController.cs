@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Common.Auth;
 
 namespace TaskService.Controllers;
 
@@ -33,6 +34,7 @@ public class TaskUserController : ControllerBase
     }
 
     [HttpGet("task/{taskId}/users")]
+    [Authorize]
     public async Task<IActionResult> GetUsersByTask(int taskId)
     {
         var users = await _taskUserService.GetUserIdsByTaskIdAsync(taskId);
@@ -40,8 +42,14 @@ public class TaskUserController : ControllerBase
     }
 
     [HttpGet("user/{userId}/tasks")]
+    [Authorize]
     public async Task<IActionResult> GetTasksByUser(int userId)
     {
+        if (!User.CanAccessManagedUser(userId))
+        {
+            return Forbid();
+        }
+
         var tasks = await _taskUserService.GetTaskIdsByUserIdAsync(userId);
         return Ok(tasks);
     }

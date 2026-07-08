@@ -1,3 +1,5 @@
+using Common.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Interfaces;
 
@@ -15,6 +17,7 @@ public class UserSessionController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetSessions([FromQuery] bool activeOnly = false)
     {
@@ -23,9 +26,15 @@ public class UserSessionController : ControllerBase
     }
 
     [HttpGet("user/{userId:int}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserSessions(int userId, [FromQuery] bool activeOnly = false)
     {
+        if (!User.AccessUser(userId))
+        {
+            return Forbid();
+        }
+
         var sessions = await _userSessionService.GetUserSessionsAsync(userId, activeOnly);
         return Ok(sessions);
     }

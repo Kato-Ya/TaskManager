@@ -19,6 +19,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetRolesList()
     {
@@ -27,6 +28,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet("{roleId}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetRoleById(int roleId)
@@ -68,9 +70,9 @@ public class RoleController : ControllerBase
     [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteRole(int roleId)
+    public async Task<IActionResult> DeleteRole(int id)
     {
-        var deletedRole = await _roleService.DeleteRoleAsync(roleId);
+        var deletedRole = await _roleService.DeleteRoleAsync(id);
         return Ok(deletedRole);
     }
 }

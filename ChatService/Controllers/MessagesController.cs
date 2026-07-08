@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ChatService.Services;
+using Microsoft.AspNetCore.Authorization;
 using ChatService.Hubs;
 using ChatService.Entities;
 using ChatService.Dto;
@@ -10,6 +11,7 @@ namespace ChatService.Controllers;
 
 [Route("api/chat")]
 [ApiController]
+[Authorize]
 public class MessagesController : ControllerBase
 {
     private readonly IChatMessageService _chatMessageService;
@@ -47,6 +49,11 @@ public class MessagesController : ControllerBase
     {
 
         var savedMessage = await _chatMessageService.SendMessageAsync(User, message);
+        if (savedMessage is null)
+        {
+            return Unauthorized();
+        }
+
         return Ok(savedMessage);
     }
 }

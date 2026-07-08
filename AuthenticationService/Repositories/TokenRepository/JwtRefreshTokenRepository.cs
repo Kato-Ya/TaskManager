@@ -5,16 +5,20 @@ namespace AuthenticationService.Repositories.TokenRepository;
 public class JwtRefreshTokenRepository : IJwtRefreshTokenRepository
 {
     private readonly IMemoryCache _memoryCache;
+    private readonly ILogger<JwtRefreshTokenRepository> _logger;
 
-    public JwtRefreshTokenRepository(IMemoryCache memoryCache)
+    public JwtRefreshTokenRepository(
+        IMemoryCache memoryCache,
+        ILogger<JwtRefreshTokenRepository> logger)
     {
         _memoryCache = memoryCache;
+        _logger = logger;
     }
 
     public async Task<RefreshToken?> GetByIdAsync(string id)
     {
         await Task.CompletedTask;
-        Console.WriteLine($"INSTANCE: {Environment.ProcessId}");
+        _logger.LogDebug("Reading refresh token in process {ProcessId}", Environment.ProcessId);
         if (_memoryCache.TryGetValue(id, out var token))
         {
             if (token != null)
@@ -36,8 +40,10 @@ public class JwtRefreshTokenRepository : IJwtRefreshTokenRepository
     {
         await Task.CompletedTask;
         var token = await GetByIdAsync(refreshToken.Id);
-        Console.WriteLine($"REFRESH TOKEN FOUND: {token != null}");
-        Console.WriteLine($"INSTANCE: {Environment.ProcessId}");
+        _logger.LogDebug(
+            "Saving refresh token in process {ProcessId}. Existing token found: {TokenFound}",
+            Environment.ProcessId,
+            token != null);
         if (token != null)
         {
             await DeleteAsync(refreshToken);

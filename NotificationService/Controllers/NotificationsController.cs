@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NotificationService.Interfaces;
 using NotificationService.Dto;
-using Microsoft.AspNetCore.Components;
+using Common.Auth;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NotificationService.Controllers;
 
@@ -19,15 +20,22 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpGet("{userId}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<NotificationDto>>> GetNotifications(int userId)
     {
+        if (!User.CanAccessUser(userId))
+        {
+            return Forbid();
+        }
+
         var notifications = await _notificationService.GetNotificationAsync(userId);
         return Ok(notifications);
     }
 
     [HttpPost("send-test-email")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> SendTestEmail([FromQuery] string email)
     {

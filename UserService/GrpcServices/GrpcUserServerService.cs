@@ -15,11 +15,15 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
 {
     //private readonly ApplicationDbContext _dbContext;
     private readonly IRepositoryBase<Users> _usersRepository;
+    private readonly ILogger<GrpcUserServerService> _logger;
 
-    public GrpcUserServerService(/*ApplicationDbContext dbContext,*/ IRepositoryBase<Users> repository)
+    public GrpcUserServerService(
+        /*ApplicationDbContext dbContext,*/ IRepositoryBase<Users> repository,
+        ILogger<GrpcUserServerService> logger)
     {
         //_dbContext = dbContext;
         _usersRepository = repository;
+        _logger = logger;
     }
 
 
@@ -62,18 +66,7 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
                         $"User with name {request.Username} not found"));
             }
 
-            Console.WriteLine($"User found: {user.Username}");
-
-            Console.WriteLine($"UserRoles null?: {user.UserRoles == null}");
-
-            if (user.UserRoles != null)
-            {
-                foreach (var ur in user.UserRoles)
-                {
-                    Console.WriteLine($"Role is null: {ur.Role == null}");
-                    Console.WriteLine($"Role name: {ur.Role?.Name}");
-                }
-            }
+            _logger.LogDebug("User found by gRPC username: {Username}", user.Username);
 
             return new UserResponse
             {
@@ -84,7 +77,7 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
                 PasswordHash = user.PasswordHash,
                 Roles =
                 {
-                    user.UserRoles
+                    (user.UserRoles ?? Enumerable.Empty<UserRole>())
                         .Where(ur => ur.Role != null)
                         .Select(ur => ur.Role.Name)
                 }
@@ -92,8 +85,7 @@ public class GrpcUserServerService : UserGrpc.UserGrpcBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("=== EXCEPTION ===");
-            Console.WriteLine(ex.ToString());
+            _logger.LogError(ex, "gRPC username lookup failed for {Username}", request.Username);
 
             throw;
         }
