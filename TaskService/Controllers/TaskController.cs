@@ -20,7 +20,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet("{taskId}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTaskById(int taskId)
@@ -30,7 +30,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTaskList()
     {
@@ -53,6 +53,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "AdminOrManager")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateTask([FromBody] TaskDto taskDto, int id)

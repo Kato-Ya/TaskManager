@@ -8,8 +8,10 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Collections.Concurrent;
 using ChatService.ConnectionManager;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatService.Hubs;
+[Authorize]
 public class ChatHub : Hub
 {
     private readonly IMessageService _messageService;

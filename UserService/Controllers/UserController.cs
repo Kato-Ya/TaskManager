@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Common.Auth;
 using UserService.Dto;
 using UserService.Entities;
 using UserService.Interfaces;
@@ -19,6 +20,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsersList()
     {
@@ -27,10 +29,16 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{userId}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserById(int userId)
     {
+        if (!User.AccessManagedUser(userId))
+        {
+            return Forbid();
+        }
+
         var user = await _userService.GetByIdUserAsync(userId);
         return Ok(user);
     }

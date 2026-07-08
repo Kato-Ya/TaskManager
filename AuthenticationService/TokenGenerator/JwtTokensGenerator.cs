@@ -12,11 +12,16 @@ public class JwtTokensGenerator : IJwtTokensGenerator
 {
     private readonly IConfiguration _config;
     private readonly IJwtRefreshTokenRepository _refreshTokenRepository;
+    private readonly ILogger<JwtTokensGenerator> _logger;
 
-    public JwtTokensGenerator(IConfiguration config, IJwtRefreshTokenRepository refreshTokenRepository)
+    public JwtTokensGenerator(
+        IConfiguration config,
+        IJwtRefreshTokenRepository refreshTokenRepository,
+        ILogger<JwtTokensGenerator> logger)
     {
         _config = config;
         _refreshTokenRepository = refreshTokenRepository;
+        _logger = logger;
     }
 
     public async Task<(string accessToken, RefreshToken refreshToken)> GenerateTokensAsync(UserDto userInfo)
@@ -74,7 +79,7 @@ public class JwtTokensGenerator : IJwtTokensGenerator
     public async Task InvalidateRefreshTokenAsync(string refreshTokenId)
     {
         var token = await _refreshTokenRepository.GetByIdAsync(refreshTokenId);
-        Console.WriteLine($"REFRESH TOKEN FOUND: {token != null}");
+        _logger.LogDebug("Invalidating refresh token. Token found: {TokenFound}", token != null);
         if (token != null)
         {
             await _refreshTokenRepository.DeleteAsync(token);

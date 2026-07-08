@@ -19,6 +19,7 @@ public class UserRoleController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserRoleList()
     {
@@ -27,6 +28,7 @@ public class UserRoleController : ControllerBase
     }
 
     [HttpGet("{userRoleId}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserRoleById(int userRoleId)
@@ -58,9 +60,9 @@ public class UserRoleController : ControllerBase
     [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateUsersRoles([FromBody] UserRoleDto userRoleDto, int userRoleId)
+    public async Task<IActionResult> UpdateUsersRoles([FromBody] UserRoleDto userRoleDto, int id)
     {
-        if (userRoleId != userRoleDto.Id)
+        if (id != userRoleDto.Id)
         {
             return BadRequest("Id's do not match");
         }

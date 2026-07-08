@@ -27,7 +27,7 @@ public class UserRoleService : IUserRoleService
         return await _repository.ListAsync(new UserRoleGetAllSpecification());
     }
 
-    public async Task<UserRole> GetUserRoleByIdAsync(int userRoleId)
+    public async Task<UserRole?> GetUserRoleByIdAsync(int userRoleId)
     {
         return await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleId));
     }

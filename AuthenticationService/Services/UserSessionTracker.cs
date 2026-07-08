@@ -6,10 +6,14 @@ namespace AuthenticationService.Services;
 public class UserSessionTracker : IUserSessionTracker
 {
     private readonly GrpcUserSessionClientService _grpcUserSessionClient;
+    private readonly ILogger<UserSessionTracker> _logger;
 
-    public UserSessionTracker(GrpcUserSessionClientService grpcUserSessionClient)
+    public UserSessionTracker(
+        GrpcUserSessionClientService grpcUserSessionClient,
+        ILogger<UserSessionTracker> logger)
     {
         _grpcUserSessionClient  = grpcUserSessionClient;
+        _logger = logger;
     }
 
     public async Task TrackUserSignInAsync(int userId, ServerCallContext context)
@@ -22,7 +26,7 @@ public class UserSessionTracker : IUserSessionTracker
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Session signin failed: {ex.Message}");
+            _logger.LogWarning(ex, "Session sign-in tracking failed for user {UserId}", userId);
         }
     }
 
@@ -34,7 +38,7 @@ public class UserSessionTracker : IUserSessionTracker
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Session signout failed: {ex.Message}");
+            _logger.LogWarning(ex, "Session sign-out tracking failed for user {UserId}", userId);
         }
     }
 
