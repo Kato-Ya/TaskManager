@@ -57,6 +57,39 @@ public class UserService : IUserService
         });
     }
 
+    public async Task<IEnumerable<UserSearchDto>> GetUserSearchAsync()
+    {
+        var userList = await _repository.ListAsync(new UserGetAllSpecification());
+
+        return userList.Select(user => new UserSearchDto
+        {
+            Id = user.Id,
+            Username = user.Username
+        });
+    }
+
+    public async Task<CurrentUserDto?> GetCurrentUserAsync(int userId)
+    {
+        var user = await _repository.FirstOrDefaultAsync(
+            new UserGetByIdSpecification(userId));
+
+        if (user == null)
+            return null;
+
+        return new CurrentUserDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            State = user.State,
+            CreatedAt = user.CreatedAt,
+            Roles = user.UserRoles
+                .Where(ur => ur.Role != null)
+                .Select(ur => ur.Role.Name)
+                .ToList()
+        };
+    }
+
     //public async Task<Users?> GetByIdUserAsync(int userId)
     //{
     //    return await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
