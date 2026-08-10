@@ -1,13 +1,9 @@
 ﻿using UserService.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using UserService.Data;
 using UserService.Dto;
 using UserService.Entities;
 using UserService.Specifications.UserSpecifications;
-using UserService.Specifications.UserRoleSpecifications;
 using UserService.Specifications.UserSessionSpecifications;
 using Ardalis.Specification;
-using System.Threading.Tasks;
 using UserService.PasswordWorker;
 
 namespace UserService.Services;
@@ -29,97 +25,26 @@ public class UserService : IUserService
         _userSessionRepository = userSessionRepository;
     }
 
-    //public async Task<IEnumerable<Users>> GetAllUsersAsync()
-    //{
-    //    return await _repository.ListAsync(new UserGetAllSpecification());
-    //}
-
     public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync()
     {
-        var userList = await _repository.ListAsync(new UserGetAllSpecification());
-
-        return userList.Select(user => new UserResponseDto
-        {
-            Id = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            State = user.State,
-            CreatedAt = user.CreatedAt,
-
-            Roles = user.UserRoles
-                .Select(ur => new RoleDto
-                {
-                    Id = ur.Role.Id,
-                    Name = ur.Role.Name,
-                    Description = ur.Role.Description
-                })
-                .ToList()
-        });
+        return await _repository.ListAsync(new UserResponseSpecification());
     }
 
     public async Task<IEnumerable<UserSearchDto>> GetUserSearchAsync()
     {
-        var userList = await _repository.ListAsync(new UserGetAllSpecification());
-
-        return userList.Select(user => new UserSearchDto
-        {
-            Id = user.Id,
-            Username = user.Username
-        });
+        return await _repository.ListAsync(new UserSearchSpecification());
     }
 
     public async Task<CurrentUserDto?> GetCurrentUserAsync(int userId)
     {
-        var user = await _repository.FirstOrDefaultAsync(
-            new UserGetByIdSpecification(userId));
-
-        if (user == null)
-            return null;
-
-        return new CurrentUserDto
-        {
-            Id = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            State = user.State,
-            CreatedAt = user.CreatedAt,
-            Roles = user.UserRoles
-                .Where(ur => ur.Role != null)
-                .Select(ur => ur.Role.Name)
-                .ToList()
-        };
+        return await _repository.FirstOrDefaultAsync(
+            new CurrentUserSpecification(userId));
     }
-
-    //public async Task<Users?> GetByIdUserAsync(int userId)
-    //{
-    //    return await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
-    //}
 
     public async Task<UserResponseDto?> GetByIdUserAsync(int userId)
     {
-        var user = await _repository.FirstOrDefaultAsync(
-            new UserGetByIdSpecification(userId));
-
-        if (user == null)
-            return null;
-
-        return new UserResponseDto
-        {
-            Id = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            State = user.State,
-            CreatedAt = user.CreatedAt,
-
-            Roles = user.UserRoles
-                .Select(ur => new RoleDto
-                {
-                    Id = ur.Role.Id,
-                    Name = ur.Role.Name,
-                    Description = ur.Role.Description
-                })
-                .ToList()
-        };
+        return await _repository.FirstOrDefaultAsync(
+            new UserResponseSpecification(userId));
     }
 
     public async Task<Users> CreateUserAsync(CreateUserDto createUserDto)
