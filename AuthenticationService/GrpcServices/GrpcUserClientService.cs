@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace AuthenticationService.GrpcServices;
 
 [AllowAnonymous]
-public class GrpcUserClientService
+public class GrpcUserClientService : AuthenticationService.Interfaces.IUserClientService
 {
     private readonly UserGrpc.UserGrpcClient _client;
 

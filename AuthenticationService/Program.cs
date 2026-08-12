@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using AuthenticationService;
 using AuthenticationService.GrpcServices;
+using AuthenticationService.Interfaces;
 using System.Text.Json;
 using Common.Auth;
 using Microsoft.IdentityModel.Tokens;
@@ -47,7 +48,7 @@ builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 {
     o.Address = new Uri(userServiceGrpcAddress);
 });
-builder.Services.AddScoped<GrpcUserClientService>();
+builder.Services.AddScoped<IUserClientService, GrpcUserClientService>();
 
 builder.Services.AddGrpcClient<UserSessionGrpc.UserSessionGrpcClient>(o =>
 {
