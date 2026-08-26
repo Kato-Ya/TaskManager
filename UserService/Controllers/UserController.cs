@@ -71,6 +71,11 @@ public class UserController : ControllerBase
         }
 
         var user = await _userService.GetByIdUserAsync(userId);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
         return Ok(user);
     }
 

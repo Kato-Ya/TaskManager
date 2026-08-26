@@ -64,6 +64,22 @@ public class UserControllerAuthorizationTests : IClassFixture<UserServiceWebAppl
     }
 
     [Fact]
+    public async Task GetCurrentUser_ReturnsUnauthorizedWhenTokenHasNoUserId()
+    {
+        using var response = await GetAsync("/api/users/me", role: "User");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_ReturnsNotFoundWhenUserDoesNotExist()
+    {
+        using var response = await GetAsync("/api/users/me", userId: 404, "User");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task SearchUsers_ReturnsUnauthorizedWithoutToken()
     {
         using var response = await GetAsync("/api/users/search");
@@ -108,6 +124,14 @@ public class UserControllerAuthorizationTests : IClassFixture<UserServiceWebAppl
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
+    [Fact]
+    public async Task GetUserById_ReturnsNotFoundWhenUserDoesNotExist()
+    {
+        using var response = await GetAsync("/api/users/404", userId: 1, "Admin");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
     private async Task<HttpResponseMessage> GetAsync(
         string path,
         int? userId = null,
@@ -120,22 +144,23 @@ public class UserControllerAuthorizationTests : IClassFixture<UserServiceWebAppl
         });
 
         using var request = new HttpRequestMessage(HttpMethod.Get, path);
-        if (userId.HasValue)
+        if (userId.HasValue || role != null)
         {
             request.Headers.Authorization = new AuthenticationHeaderValue(
                 "Bearer",
-                CreateAccessToken(userId.Value, role));
+                CreateAccessToken(userId, role));
         }
 
         return await client.SendAsync(request);
     }
 
-    private static string CreateAccessToken(int userId, string? role)
+    private static string CreateAccessToken(int? userId, string? role)
     {
-        var claims = new List<Claim>
+        var claims = new List<Claim>();
+        if (userId.HasValue)
         {
-            new(JwtRegisteredClaimNames.Sub, userId.ToString())
-        };
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, userId.Value.ToString()));
+        }
 
         if (role != null)
         {

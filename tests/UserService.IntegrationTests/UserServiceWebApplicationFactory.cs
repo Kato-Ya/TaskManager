@@ -33,7 +33,13 @@ public sealed class UserServiceWebApplicationFactory : WebApplicationFactory<Pro
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<IUserService>();
+            services.RemoveAll<IRoleService>();
+            services.RemoveAll<IUserRoleService>();
+            services.RemoveAll<IUserSessionService>();
             services.AddSingleton<IUserService, FakeUserService>();
+            services.AddSingleton<IRoleService, FakeRoleService>();
+            services.AddSingleton<IUserRoleService, FakeUserRoleService>();
+            services.AddSingleton<IUserSessionService, FakeUserSessionService>();
         });
     }
 
@@ -66,6 +72,11 @@ public sealed class UserServiceWebApplicationFactory : WebApplicationFactory<Pro
 
         public Task<CurrentUserDto?> GetCurrentUserAsync(int userId)
         {
+            if (userId == 404)
+            {
+                return Task.FromResult<CurrentUserDto?>(null);
+            }
+
             return Task.FromResult<CurrentUserDto?>(new CurrentUserDto
             {
                 Id = userId,
@@ -79,6 +90,11 @@ public sealed class UserServiceWebApplicationFactory : WebApplicationFactory<Pro
 
         public Task<UserResponseDto?> GetByIdUserAsync(int userId)
         {
+            if (userId == 404)
+            {
+                return Task.FromResult<UserResponseDto?>(null);
+            }
+
             return Task.FromResult<UserResponseDto?>(new UserResponseDto
             {
                 Id = userId,
@@ -97,5 +113,81 @@ public sealed class UserServiceWebApplicationFactory : WebApplicationFactory<Pro
 
         public Task<bool> DeleteUserAsync(int userId) =>
             throw new NotSupportedException();
+    }
+
+    private sealed class FakeRoleService : IRoleService
+    {
+        public Task<IEnumerable<Roles>> GetAllRoleAsync() =>
+            Task.FromResult<IEnumerable<Roles>>([CreateRole(1, "Admin")]);
+
+        public Task<Roles?> GetByIdRoleAsync(int roleId) =>
+            Task.FromResult<Roles?>(CreateRole(roleId, $"Role-{roleId}"));
+
+        public Task<Roles> CreateRoleAsync(RoleDto roleDto) =>
+            Task.FromResult(CreateRole(10, roleDto.Name, roleDto.Description));
+
+        public Task<Roles> UpdateRoleAsync(RoleDto roleDto) =>
+            Task.FromResult(CreateRole(roleDto.Id, roleDto.Name, roleDto.Description));
+
+        public Task<bool> DeleteRoleAsync(int roleId) => Task.FromResult(true);
+
+        private static Roles CreateRole(int id, string name, string? description = null) => new()
+        {
+            Id = id,
+            Name = name,
+            Description = description
+        };
+    }
+
+    private sealed class FakeUserRoleService : IUserRoleService
+    {
+        public Task<IEnumerable<UserRole>> GetAllUserRoleAsync() =>
+            Task.FromResult<IEnumerable<UserRole>>([]);
+
+        public Task<UserRole?> GetUserRoleByIdAsync(int id) =>
+            Task.FromResult<UserRole?>(null);
+
+        public Task AssignRolesAsync(int userId, List<int> roleIds) => Task.CompletedTask;
+
+        public Task DeleteUserRoleAsync(int id) => Task.CompletedTask;
+
+        public Task<UserRole> UpdateUserRoleAsync(UserRoleDto userRoleDto) =>
+            Task.FromResult(new UserRole
+            {
+                Id = userRoleDto.Id,
+                UserId = userRoleDto.UserId,
+                RoleId = userRoleDto.RoleId
+            });
+    }
+
+    private sealed class FakeUserSessionService : IUserSessionService
+    {
+        public Task SignInUserSessionAsync(int userdId, string? ipAddress, string? userAgent) =>
+            Task.CompletedTask;
+
+        public Task SignOutUserSessionAsync(int userId) => Task.CompletedTask;
+
+        public Task<IEnumerable<UserSessionDto>> GetSessionsAsync(bool activeOnly = false) =>
+            Task.FromResult<IEnumerable<UserSessionDto>>(
+                activeOnly ? [CreateSession(1, true)] : [CreateSession(1, true), CreateSession(2, false)]);
+
+        public Task<IEnumerable<UserSessionDto>> GetUserSessionsAsync(
+            int userId,
+            bool activeOnly = false) =>
+            Task.FromResult<IEnumerable<UserSessionDto>>(
+                activeOnly
+                    ? [CreateSession(userId, true)]
+                    : [CreateSession(userId, true), CreateSession(userId, false)]);
+
+        private static UserSessionDto CreateSession(int userId, bool isActive) => new()
+        {
+            Id = isActive ? 1 : 2,
+            UserId = userId,
+            Username = $"user-{userId}",
+            Email = $"user-{userId}@example.test",
+            SignInTime = DateTime.UnixEpoch,
+            SignOutTime = isActive ? null : DateTime.UnixEpoch.AddHours(1),
+            IsActive = isActive
+        };
     }
 }
