@@ -2,6 +2,7 @@
 using ChatService.Interfaces;
 using System.Security.Claims;
 using ChatService.Entities;
+using Common.Auth;
 
 namespace ChatService.Services;
 public class ChatMessageService : IChatMessageService
@@ -25,7 +26,7 @@ public class ChatMessageService : IChatMessageService
 
     public async Task<IEnumerable<ChatMessageDto>?> GetConversationMessagesAsync(ClaimsPrincipal user, int otherUserId, int take)
     {
-        var userId = GetCurrentUserId(user);
+        var userId = user.GetUserId();
 
         if (!userId.HasValue)
         {
@@ -40,7 +41,7 @@ public class ChatMessageService : IChatMessageService
 
     public async Task<ChatMessageDto?> SendMessageAsync(ClaimsPrincipal user, CreateChatMessageDto message)
     {
-        var userId = GetCurrentUserId(user);
+        var userId = user.GetUserId();
 
         if (!userId.HasValue)
         {
@@ -52,14 +53,6 @@ public class ChatMessageService : IChatMessageService
         var savedMessage = await _chatService.SendMessageAsync(message);
 
         return savedMessage;
-    }
-
-    private int? GetCurrentUserId(ClaimsPrincipal user)
-    {
-        var userIdValue = user.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                          user.FindFirstValue("sub");
-
-        return int.TryParse(userIdValue, out var userId) ? userId : null;
     }
 
     private static ChatMessageDto ToChatMessageDto(ChatMessage message)
