@@ -1,5 +1,6 @@
-﻿using NotificationService.GrpcServices;
 using NotificationService.Interfaces;
+using Common.Messaging;
+using NotificationService.Messaging;
 using NotificationService.Services;
 
 namespace NotificationService;
@@ -7,15 +8,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddNotificationServices(this IServiceCollection services)
     {
-        //TODO: Verification comment
-        //services.AddScoped<INotificationService, Services.NotificationService>();
+        services.AddScoped<INotificationService, Services.NotificationService>();
         services.AddScoped<IEmailSenderService, EmailSenderService>();
-
-        //services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryTask<>));
-
-        //gRPC
-        services.AddScoped<GrpcNotificationServerService>();
-        services.AddScoped<GrpcUserClientService>();
+        services.AddScoped<INotificationEventStore, RedisNotificationEventStore>();
+        services.AddScoped<IIntegrationEventHandler, NotificationEventHandler>();
 
         return services;
     }

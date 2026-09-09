@@ -31,11 +31,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Auth\Common.Auth.csproj" />
+    <ProjectReference Include="..\Common.Messaging\Common.Messaging.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Protobuf Include="Protos\user.proto" GrpcServices="Client" />
-    <Protobuf Include="Protos\notification.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

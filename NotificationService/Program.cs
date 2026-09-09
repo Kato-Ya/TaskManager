@@ -1,11 +1,7 @@
 using Common.Auth;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using NotificationService;
-using NotificationService.GrpcServices;
-using NotificationService.Interfaces;
-using NotificationService.Services;
 using StackExchange.Redis;
-using UserService.Protos;
+using Common.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,30 +28,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddNotificationServices();
 
-builder.Services.AddGrpc(); 
+builder.Services.AddRabbitMq(builder.Configuration);
+builder.Services.AddHostedService<RabbitMqConsumerWorker>();
 var redisConnectionString = builder.Configuration.GetConnectionString("Redis")
     ?? throw new InvalidOperationException("ConnectionStrings:Redis is not configured.");
-var userServiceGrpcAddress = builder.Configuration["Grpc:UserService"]
-    ?? throw new InvalidOperationException("Grpc:UserService is not configured.");
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
-    ConnectionMultiplexer.Connect(redisConnectionString));
-
-builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 {
-    o.Address = new Uri(userServiceGrpcAddress);
+    var redisOptions = ConfigurationOptions.Parse(redisConnectionString);
+    redisOptions.AbortOnConnectFail = false;
+    return ConnectionMultiplexer.Connect(redisOptions);
 });
-builder.Services.AddScoped<GrpcUserClientService>();
-
-builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
-builder.Services.AddScoped<INotificationService, NotificationService.Services.NotificationService>();
-
 
 var app = builder.Build();
 
 app.UseCors("AllowAll");
 
-app.MapGrpcService<GrpcNotificationServerService>();
 app.MapGet("/NotificationService", () => "~NotificationService is running~");
 
 // Configure the HTTP request pipeline.

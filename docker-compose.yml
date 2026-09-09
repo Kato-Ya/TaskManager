@@ -12,16 +12,44 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
       
     networks:
       - app-network
   redis:
     image: redis:latest
     container_name: redis
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis_data:/data
     ports:
       - "6379:6379"
     networks:
      - app-network
+
+  rabbitmq:
+    image: rabbitmq:4.2-management
+    hostname: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-tmapi}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-tmapi-dev}
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks:
+      - app-network
 
   userservice:
     build:
@@ -44,6 +72,9 @@ services:
       - "5007:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=${RABBITMQ_USER:-tmapi}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD:-tmapi-dev}
     depends_on:
       - userservice
     networks:
@@ -58,6 +89,9 @@ services:
        - "5005:8081"
      environment:
        - ASPNETCORE_ENVIRONMENT=Development
+       - RabbitMQ__HostName=rabbitmq
+       - RabbitMQ__UserName=${RABBITMQ_USER:-tmapi}
+       - RabbitMQ__Password=${RABBITMQ_PASSWORD:-tmapi-dev}
      depends_on:
        - redis
      networks:
@@ -72,6 +106,9 @@ services:
        - "5010:8081"
      environment:
        - ASPNETCORE_ENVIRONMENT=Development
+       - RabbitMQ__HostName=rabbitmq
+       - RabbitMQ__UserName=${RABBITMQ_USER:-tmapi}
+       - RabbitMQ__Password=${RABBITMQ_PASSWORD:-tmapi-dev}
      depends_on:
        - redis
        - postgres
@@ -113,6 +150,8 @@ services:
         - authservice
 
 volumes:
+  rabbitmq_data:
+  redis_data:
   postgres_data:
     name: postgres_data
 

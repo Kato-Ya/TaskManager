@@ -2,6 +2,7 @@
 public class NotificationDto
 {
     public int Id { get; set; }
+    public Guid? EventId { get; set; }
     public int UserId { get; set; }
     public string Message { get; set; } = null!;
     public int TaskId { get; set; }
