@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NotificationService.Dto;
 using NotificationService.Interfaces;
+using NotificationService.Messaging;
 using StackExchange.Redis;
 
 namespace NotificationService.IntegrationTests;
@@ -26,7 +27,7 @@ public sealed class NotificationServiceWebApplicationFactory : WebApplicationFac
                 ["Jwt:Issuer"] = JwtIssuer,
                 ["Jwt:Audience"] = JwtAudience,
                 ["ConnectionStrings:Redis"] = "localhost:6379",
-                ["Grpc:UserService"] = "http://localhost:5000"
+                ["RabbitMQ:Enabled"] = "false"
             });
         });
 
@@ -35,6 +36,8 @@ public sealed class NotificationServiceWebApplicationFactory : WebApplicationFac
             services.RemoveAll<IConnectionMultiplexer>();
             services.RemoveAll<INotificationService>();
             services.RemoveAll<IEmailSenderService>();
+            services.RemoveAll<INotificationEventStore>();
+            services.AddSingleton<INotificationEventStore, FakeNotificationEventStore>();
             services.AddSingleton<INotificationService, FakeNotificationService>();
             services.AddSingleton<IEmailSenderService, FakeEmailSenderService>();
         });
@@ -69,5 +72,13 @@ public sealed class NotificationServiceWebApplicationFactory : WebApplicationFac
     {
         public Task SendEmailAsync(string email, string subject, string htmlMessage) =>
             Task.CompletedTask;
+    }
+
+    private sealed class FakeNotificationEventStore : INotificationEventStore
+    {
+        public Task StoreOnceAsync(Guid eventId, NotificationDto notification)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

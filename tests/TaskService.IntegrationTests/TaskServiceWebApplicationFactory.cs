@@ -28,7 +28,7 @@ public sealed class TaskServiceWebApplicationFactory : WebApplicationFactory<Pro
                 ["ConnectionStrings:DefaultConnection"] =
                     "Host=localhost;Port=5432;Database=tests;Username=tests;Password=tests",
                 ["Grpc:UserService"] = "http://localhost:5000",
-                ["Grpc:NotificationService"] = "http://localhost:5003"
+                ["RabbitMQ:Enabled"] = "false"
             });
         });
 
