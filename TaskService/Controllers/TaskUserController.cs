@@ -10,10 +10,12 @@ namespace TaskService.Controllers;
 public class TaskUserController : ControllerBase
 {
     private readonly ITaskUserService _taskUserService;
+    private readonly ITaskService _taskService;
 
-    public TaskUserController(ITaskUserService taskUserService)
+    public TaskUserController(ITaskUserService taskUserService, ITaskService taskService)
     {
         _taskUserService = taskUserService;
+        _taskService = taskService;
     }
     [Authorize(Policy = "AdminOrManager")]
     [HttpPost("{taskId}/assign/{userId}")]
@@ -37,6 +39,19 @@ public class TaskUserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetUsersByTask(int taskId)
     {
+        var currentUserId = User.GetUserId();
+        if (!currentUserId.HasValue)
+        {
+            return Forbid();
+        }
+
+        var assignedUserId = User.IsAdminOrManager() ? null : currentUserId;
+        var task = await _taskService.GetTaskByIdAsync(taskId, assignedUserId);
+        if (task == null)
+        {
+            return NotFound();
+        }
+
         var users = await _taskUserService.GetUserIdsByTaskIdAsync(taskId);
         return Ok(users);
     }

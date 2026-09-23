@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TaskService.Dto;
 using TaskService.Entities;
 using TaskService.Interfaces;
+using Common.Auth;
 
 namespace TaskService.Controllers;
 
@@ -25,7 +26,14 @@ public class TaskController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTaskById(int taskId)
     {
-        var task = await _taskService.GetTaskByIdAsync(taskId);
+        var currentUserId = User.GetUserId();
+        if (!currentUserId.HasValue)
+        {
+            return Forbid();
+        }
+
+        var assignedUserId = User.IsAdminOrManager() ? null : currentUserId;
+        var task = await _taskService.GetTaskByIdAsync(taskId, assignedUserId);
         if (task == null)
         {
             return NotFound();
@@ -39,8 +47,41 @@ public class TaskController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTaskList()
     {
-        var tasks = await _taskService.GetAllTasksAsync();
+        var currentUserId = User.GetUserId();
+        if (!currentUserId.HasValue)
+        {
+            return Forbid();
+        }
+
+        var assignedUserId = User.IsAdminOrManager() ? null : currentUserId;
+        var tasks = await _taskService.GetAllTasksAsync(assignedUserId);
         return Ok(tasks);
+    }
+
+    [HttpPatch("{taskId:int}/status")]
+    [Authorize]
+    public async Task<IActionResult> UpdateStatus(int taskId, [FromBody] TaskStatusDto statusDto)
+    {
+        if (statusDto == null ||
+            (statusDto.Status != "Pending" && statusDto.Status != "InProgress" && statusDto.Status != "Done"))
+        {
+            return BadRequest("Invalid task status.");
+        }
+
+        var currentUserId = User.GetUserId();
+        if (!currentUserId.HasValue)
+        {
+            return Forbid();
+        }
+
+        var assignedUserId = User.IsAdminOrManager() ? null : currentUserId;
+        var task = await _taskService.UpdateStatusAsync(taskId, statusDto.Status, assignedUserId);
+        if (task == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(task);
     }
 
     [HttpPost]

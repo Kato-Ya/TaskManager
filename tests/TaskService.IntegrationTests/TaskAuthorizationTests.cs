@@ -39,11 +39,121 @@ public class TaskAuthorizationTests : IClassFixture<TaskServiceWebApplicationFac
     }
 
     [Fact]
+    public async Task GetTasks_ReturnsOnlyAssignedTasksForUser()
+    {
+        using var response = await SendAsync(HttpMethod.Get, "/api/tasks", role: "User");
+        var tasks = await response.Content.ReadFromJsonAsync<List<TaskResponseDto>>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var task = Assert.Single(tasks!);
+        Assert.Equal(1, task.Id);
+    }
+
+    [Theory]
+    [InlineData("Manager")]
+    [InlineData("Admin")]
+    public async Task GetTasks_ReturnsAllTasksForPrivilegedRoles(string role)
+    {
+        using var response = await SendAsync(HttpMethod.Get, "/api/tasks", role: role);
+        var tasks = await response.Content.ReadFromJsonAsync<List<TaskResponseDto>>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(2, tasks!.Count);
+    }
+
+    [Fact]
     public async Task GetTaskById_ReturnsNotFoundWhenTaskDoesNotExist()
     {
         using var response = await SendAsync(HttpMethod.Get, "/api/tasks/404", role: "User");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetTaskById_HidesOtherUsersTask()
+    {
+        using var response = await SendAsync(HttpMethod.Get, "/api/tasks/2", role: "User");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetUsersByTask_HidesOtherUsersTask()
+    {
+        using var response = await SendAsync(HttpMethod.Get, "/api/task-users/task/2/users", role: "User");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateStatus_AllowsAssignedUserAndSavesStatus()
+    {
+        using var update = await SendAsync(
+            HttpMethod.Patch,
+            "/api/tasks/1/status",
+            role: "User",
+            content: JsonContent.Create(new TaskStatusDto { Status = "InProgress" }));
+        using var get = await SendAsync(HttpMethod.Get, "/api/tasks/1", role: "User");
+        var task = await get.Content.ReadFromJsonAsync<TaskService.Entities.Tasks>();
+        using var finish = await SendAsync(
+            HttpMethod.Patch,
+            "/api/tasks/1/status",
+            role: "User",
+            content: JsonContent.Create(new TaskStatusDto { Status = "Done" }));
+        using var getFinished = await SendAsync(HttpMethod.Get, "/api/tasks/1", role: "User");
+        var finishedTask = await getFinished.Content.ReadFromJsonAsync<TaskService.Entities.Tasks>();
+
+        Assert.Equal(HttpStatusCode.OK, update.StatusCode);
+        Assert.Equal("InProgress", task!.Status);
+        Assert.Equal(HttpStatusCode.OK, finish.StatusCode);
+        Assert.Equal("Done", finishedTask!.Status);
+    }
+
+    [Fact]
+    public async Task UpdateStatus_AllowsManagerOnUnassignedTask()
+    {
+        using var response = await SendAsync(
+            HttpMethod.Patch,
+            "/api/tasks/2/status",
+            role: "Manager",
+            content: JsonContent.Create(new TaskStatusDto { Status = "Done" }));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateStatus_HidesOtherUsersTask()
+    {
+        using var response = await SendAsync(
+            HttpMethod.Patch,
+            "/api/tasks/2/status",
+            role: "User",
+            content: JsonContent.Create(new TaskStatusDto { Status = "Done" }));
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateStatus_RejectsUnknownStatus()
+    {
+        using var response = await SendAsync(
+            HttpMethod.Patch,
+            "/api/tasks/1/status",
+            role: "User",
+            content: JsonContent.Create(new TaskStatusDto { Status = "Unknown" }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateStatus_RequiresToken()
+    {
+        using var response = await SendAsync(
+            HttpMethod.Patch,
+            "/api/tasks/1/status",
+            content: JsonContent.Create(new TaskStatusDto { Status = "Done" }));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -82,6 +192,18 @@ public class TaskAuthorizationTests : IClassFixture<TaskServiceWebApplicationFac
             content: JsonContent.Create(CreateTaskDto(id: 8)));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateTask_ReturnsForbiddenForUser()
+    {
+        using var response = await SendAsync(
+            HttpMethod.Put,
+            "/api/tasks/1",
+            role: "User",
+            content: JsonContent.Create(CreateTaskDto(id: 1)));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     [Theory]
