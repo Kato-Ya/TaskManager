@@ -28,9 +28,9 @@ public class TaskService : ITaskService
     //{
     //    return await _repository.ListAsync(new TaskGetAllSpecification());
     //}
-    public async Task<IEnumerable<TaskResponseDto>> GetAllTasksAsync()
+    public async Task<IEnumerable<TaskResponseDto>> GetAllTasksAsync(int? assignedUserId)
     {
-        var tasks = await _repository.ListAsync(new TaskGetAllSpecification());
+        var tasks = await _repository.ListAsync(new TaskGetAllSpecification(assignedUserId));
 
         var result =  new List<TaskResponseDto>();
 
@@ -58,9 +58,9 @@ public class TaskService : ITaskService
     }
 
 
-    public async Task<Tasks?> GetTaskByIdAsync(int taskId)
+    public async Task<Tasks?> GetTaskByIdAsync(int taskId, int? assignedUserId)
     {
-        return await _repository.FirstOrDefaultAsync(new TaskGetByIdSpecification(taskId));
+        return await _repository.FirstOrDefaultAsync(new TaskGetByIdSpecification(taskId, assignedUserId));
     }
 
     public async Task<Tasks> CreateTaskAsync(TaskDto taskDto)
@@ -101,6 +101,19 @@ public class TaskService : ITaskService
 
         return currentTask;
 
+    }
+
+    public async Task<Tasks?> UpdateStatusAsync(int taskId, string status, int? assignedUserId)
+    {
+        var task = await _repository.FirstOrDefaultAsync(new TaskGetByIdSpecification(taskId, assignedUserId));
+        if (task == null)
+        {
+            return null;
+        }
+
+        task.Status = status;
+        await _repository.UpdateAsync(task);
+        return task;
     }
 
     public async Task<bool> DeleteTaskAsync(int taskId)
