@@ -1,4 +1,4 @@
-using AuthenticationService.Dto;
+﻿using AuthenticationService.Dto;
 using AuthenticationService.Interfaces;
 using AuthenticationService.Models;
 using AuthenticationService.Repositories.TokenRepository;
@@ -34,13 +34,13 @@ internal sealed class InMemoryRefreshTokenRepository : IJwtRefreshTokenRepositor
 internal sealed class FakeUserClientService : IUserClientService
 {
     private readonly Dictionary<int, UserDto> _usersById = new();
-    private readonly Dictionary<string, UserDto> _usersByName =
+    private readonly Dictionary<string, (UserDto User, string Password)> _usersByName =
         new(StringComparer.OrdinalIgnoreCase);
 
-    public void Add(UserDto user)
+    public void Add(UserDto user, string password = "correct-password")
     {
         _usersById[user.Id] = user;
-        _usersByName[user.Username] = user;
+        _usersByName[user.Username] = (user, password);
     }
 
     public Task<UserDto?> GetUserByIdAsync(int userId)
@@ -49,10 +49,10 @@ internal sealed class FakeUserClientService : IUserClientService
         return Task.FromResult(user);
     }
 
-    public Task<UserDto?> GetUserByUsernameAsync(string username)
+    public Task<UserDto?> VerifyCredentialsAsync(string username, string password)
     {
-        _usersByName.TryGetValue(username, out var user);
-        return Task.FromResult(user);
+        var valid = _usersByName.TryGetValue(username, out var entry) && entry.Password == password;
+        return Task.FromResult(valid ? entry.User : null);
     }
 }
 

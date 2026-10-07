@@ -1,11 +1,10 @@
-using Authentication.Protos;
+﻿using Authentication.Protos;
 using AuthenticationService.Dto;
 using AuthenticationService.Services;
 using AuthenticationService.TokenGenerator;
 using Grpc.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
-using PasswordHasherImplementation = AuthenticationService.PasswordHasher.PasswordHasher;
 
 namespace AuthenticationService.Tests;
 
@@ -150,7 +149,6 @@ public class AuthServiceTests
         Id = 21,
         Username = "test-user",
         Email = "test-user@example.test",
-        PasswordHash = new PasswordHasherImplementation().Encrypt("correct-password"),
         Roles = ["User"]
     };
 
@@ -176,7 +174,6 @@ public class AuthServiceTests
 
             Service = new AuthService(
                 Generator,
-                new PasswordHasherImplementation(),
                 Users,
                 Sessions);
         }

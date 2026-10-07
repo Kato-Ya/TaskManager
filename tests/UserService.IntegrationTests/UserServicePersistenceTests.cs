@@ -1,4 +1,4 @@
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
 using UserService.Data;
 using UserService.Dto;
@@ -305,9 +305,11 @@ public sealed class UserServicePersistenceTests : IAsyncLifetime
 
     private sealed class FixedPasswordHasher : IPasswordHasher
     {
-        public string Encrypt(string source) => $"hashed:{source}";
+        public string Hash(string password) => $"hashed:{password}";
 
-        public bool IsPassowrdTrue(string userPassword, string password) =>
-            password == Encrypt(userPassword);
+        public PasswordCheckResult Verify(string hashedPassword, string providedPassword) =>
+            hashedPassword == Hash(providedPassword)
+                ? PasswordCheckResult.Success
+                : PasswordCheckResult.Failed;
     }
 }

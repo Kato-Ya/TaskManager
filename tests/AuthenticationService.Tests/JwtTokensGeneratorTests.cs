@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AuthenticationService.Dto;
 using AuthenticationService.TokenGenerator;
@@ -22,8 +22,8 @@ public class JwtTokensGeneratorTests
         Assert.Equal("TMApi.Tests", token.Issuer);
         Assert.Contains("TMApp.Tests", token.Audiences);
         Assert.Equal("7", token.Subject);
-        Assert.Equal("artmark", token.Claims.Single(c => c.Type == JwtRegisteredClaimNames.UniqueName).Value);
-        Assert.Equal("artmark@example.test", token.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Email).Value);
+        Assert.Equal("test-user", token.Claims.Single(c => c.Type == JwtRegisteredClaimNames.UniqueName).Value);
+        Assert.Equal("test-user@example.test", token.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Email).Value);
         Assert.Equal(
             ["Admin", "User"],
             token.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToArray());
@@ -107,10 +107,8 @@ public class JwtTokensGeneratorTests
     internal static UserDto CreateUser() => new()
     {
         Id = 7,
-        Username = "artmark",
-        Email = "artmark@example.test",
-        PasswordHash = new AuthenticationService.PasswordHasher.PasswordHasher()
-            .Encrypt("correct-password"),
+        Username = "test-user",
+        Email = "test-user@example.test",
         Roles = ["Admin", "User"]
     };
 }

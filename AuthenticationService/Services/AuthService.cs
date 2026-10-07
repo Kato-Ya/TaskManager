@@ -1,34 +1,30 @@
 ﻿using Authentication.Protos;
 using AuthenticationService.Interfaces;
 using AuthenticationService.TokenGenerator;
-using AuthenticationService.PasswordHasher;
 using Grpc.Core;
 
 namespace AuthenticationService.Services;
 public class AuthService : IAuthService
 {
     private readonly IJwtTokensGenerator _jwtTokenGenerator;
-    private readonly IPasswordHasher _passwordHasher;
     private readonly IUserClientService _userClient;
     private readonly IUserSessionTracker _userSessionTracker;
 
     public AuthService(
         IJwtTokensGenerator jwtTokenGenerator,
-        IPasswordHasher passwordHasher,
         IUserClientService userClient,
         IUserSessionTracker userSessionTracker)
     {
         _jwtTokenGenerator = jwtTokenGenerator;
-        _passwordHasher = passwordHasher;
         _userClient = userClient;
         _userSessionTracker = userSessionTracker;
     }
 
     public async Task<AuthResponse> SignIn(SignInRequest request, ServerCallContext context)
     {
-        var user = await _userClient.GetUserByUsernameAsync(request.Username);
+        var user = await _userClient.VerifyCredentialsAsync(request.Username, request.Password);
 
-        if (user == null || !_passwordHasher.IsPassowrdTrue(user.PasswordHash, request.Password))
+        if (user == null)
         {
             throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid credentials"));
         }
