@@ -2,7 +2,6 @@
 using AuthenticationService.Services;
 using AuthenticationService.Interfaces;
 using AuthenticationService.TokenGenerator;
-using AuthenticationService.PasswordHasher;
 using AuthenticationService.Repositories.TokenRepository;
 
 namespace AuthenticationService;
@@ -12,7 +11,6 @@ public static class ServiceCollectionExtensions
     {
         //TODO: Verification comment
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IPasswordHasher, PasswordHasher.PasswordHasher>();
         services.AddScoped<IJwtRefreshTokenRepository, JwtRefreshTokenRepository>();
         services.AddScoped<IUserSessionTracker, UserSessionTracker>();
         services.AddScoped<IJwtTokensGenerator, JwtTokensGenerator>();

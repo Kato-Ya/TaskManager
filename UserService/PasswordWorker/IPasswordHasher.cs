@@ -1,6 +1,14 @@
 ﻿namespace UserService.PasswordWorker;
+
+public enum PasswordCheckResult
+{
+    Failed,
+    Success,
+    SuccessRehashNeeded
+}
+
 public interface IPasswordHasher
 {
-    public string Encrypt(string source);
-    bool IsPassowrdTrue(string userPassword, string password);
+    string Hash(string password);
+    PasswordCheckResult Verify(string hashedPassword, string providedPassword);
 }

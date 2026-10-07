@@ -1,13 +1,11 @@
-﻿using Grpc.Core;
-//using AuthenticationService.Protos;
-using AuthenticationService.Dto;
+﻿using AuthenticationService.Dto;
+using AuthenticationService.Interfaces;
+using Grpc.Core;
 using UserService.Protos;
-using Microsoft.AspNetCore.Authorization;
 
 namespace AuthenticationService.GrpcServices;
 
-[AllowAnonymous]
-public class GrpcUserClientService : AuthenticationService.Interfaces.IUserClientService
+public class GrpcUserClientService : IUserClientService
 {
     private readonly UserGrpc.UserGrpcClient _client;
 
@@ -21,16 +19,7 @@ public class GrpcUserClientService : AuthenticationService.Interfaces.IUserClien
         try
         {
             var response = await _client.GetUserByIdAsync(new UserIdRequest { Id = userId });
-
-            return new UserDto
-            {
-                Id = response.Id,
-                Username = response.Username,
-                Email = response.Email,
-                CreatedAt = DateTime.Parse(response.CreatedAt),
-                PasswordHash = response.PasswordHash,
-                Roles = response.Roles.ToList()
-            };
+            return ToUserDto(response);
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
         {
@@ -38,24 +27,23 @@ public class GrpcUserClientService : AuthenticationService.Interfaces.IUserClien
         }
     }
 
-    public async Task<UserDto?> GetUserByUsernameAsync(string username)
+    public async Task<UserDto?> VerifyCredentialsAsync(string username, string password)
     {
-        try
+        var response = await _client.VerifyCredentialsAsync(new VerifyCredentialsRequest
         {
-            var response = await _client.GetUserByNameAsync(new UserNameRequest { Username = username });
-            return new UserDto
-            {
-                Id = response.Id,
-                Username = response.Username,
-                Email = response.Email,
-                CreatedAt = DateTime.Parse(response.CreatedAt),
-                PasswordHash = response.PasswordHash,
-                Roles = response.Roles.ToList()
-            };
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            return null;
-        }
+            Username = username,
+            Password = password
+        });
+
+        return response.Success ? ToUserDto(response.User) : null;
     }
+
+    private static UserDto ToUserDto(UserResponse response) => new()
+    {
+        Id = response.Id,
+        Username = response.Username,
+        Email = response.Email,
+        CreatedAt = DateTime.Parse(response.CreatedAt),
+        Roles = response.Roles.ToList()
+    };
 }

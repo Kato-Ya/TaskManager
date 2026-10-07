@@ -49,7 +49,7 @@ public class UserService : IUserService
 
     public async Task<Users> CreateUserAsync(CreateUserDto createUserDto)
     {
-        string passwordHash = _passwordHasher.Encrypt(createUserDto.Password);
+        string passwordHash = _passwordHasher.Hash(createUserDto.Password);
         var user = new Users
         {
             Username = createUserDto.Username,

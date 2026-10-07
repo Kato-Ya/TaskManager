@@ -7,6 +7,7 @@ package user;
 service UserGrpc {
   rpc GetUserById (UserIdRequest) returns (UserResponse);
   rpc GetUserByName (UserNameRequest) returns (UserResponse);
+  rpc VerifyCredentials (VerifyCredentialsRequest) returns (VerifyCredentialsResponse);
 }
 
 message UserIdRequest {
@@ -22,6 +23,17 @@ message UserResponse {
   string username = 2;
   string email = 3;
   string createdAt = 4;
-  string passwordHash = 5;
+  reserved 5;
+  reserved "passwordHash";
   repeated string roles = 6;
+}
+
+message VerifyCredentialsRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message VerifyCredentialsResponse {
+  bool success = 1;
+  UserResponse user = 2;
 }
