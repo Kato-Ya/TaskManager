@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TaskService.Configurations;
 using TaskService.Entities;
+using Common.Messaging.Outbox;
 
 namespace TaskService.Data;
 
@@ -18,5 +19,6 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new TaskConfiguration());
         modelBuilder.ApplyConfiguration(new TaskUserConfiguration());
+        modelBuilder.AddOutbox("task_outbox");
     }
 }

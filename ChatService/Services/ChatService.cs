@@ -6,7 +6,6 @@ using ChatService.Hubs;
 using ChatService.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
-using ChatService.GrpcServices;
 using ChatService.ConnectionManager;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -15,7 +14,6 @@ public class ChatService : IChatService
 {
     private readonly IMessageService _messageService;
     private readonly GrpcUserClientService _grpcUserClient;
-    private readonly GrpcNotificationClientService _grpcNotificationClient;
     private readonly IHubContext<ChatHub> _hubContext;
     private readonly IConnectionManager _connectionManager;
 
@@ -23,13 +21,11 @@ public class ChatService : IChatService
     public ChatService(
         IMessageService messageService,
         GrpcUserClientService grpcUserClient,
-        GrpcNotificationClientService grpcNotificationClient,
         IHubContext<ChatHub> hubContext, 
         IConnectionManager connectionManager)
     {
         _messageService = messageService;
         _grpcUserClient = grpcUserClient;
-        _grpcNotificationClient = grpcNotificationClient;
         _hubContext = hubContext;
         _connectionManager = connectionManager;
     }
@@ -65,18 +61,6 @@ public class ChatService : IChatService
             SentAt = savedMessage.SentAt
         };
 
-        //await _hubContext.Clients.Group(chatMessageDtoResult.Room!).SendAsync("ReceiveMessage", chatMessageDtoResult);
-
-        //if (savedMessage.ReceiverId.HasValue)
-        //{
-
-        //    await _grpcNotificationClient.SendMessageNotificationAsync(
-        //        savedMessage.ReceiverId.Value,  
-        //        $"Вам пришло сообщение: {savedMessage.Text}",
-        //        savedMessage.Id
-        //    );
-        //}
-
         if (savedMessage.ReceiverId.HasValue)
         {
             // personal messages
@@ -86,11 +70,6 @@ public class ChatService : IChatService
                 await SendToUserConnectionsAsync(savedMessage.ReceiverId.Value, chatMessageDtoResult);
             }
 
-            await _grpcNotificationClient.SendMessageNotificationAsync(
-                savedMessage.ReceiverId.Value,
-                $"You have received a message: {savedMessage.Text}",
-                savedMessage.Id
-            );
         }
         else
         {

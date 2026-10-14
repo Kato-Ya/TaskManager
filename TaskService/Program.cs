@@ -6,7 +6,7 @@ using TaskService;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using Common.Auth;
-using NotificationService.Protos;
+using Common.Messaging;
 using TaskService.GrpcServices;
 using UserService.Protos;
 
@@ -34,8 +34,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add services to the container.
 var userServiceGrpcAddress = builder.Configuration["Grpc:UserService"]
     ?? throw new InvalidOperationException("Grpc:UserService is not configured.");
-var notificationServiceGrpcAddress = builder.Configuration["Grpc:NotificationService"]
-    ?? throw new InvalidOperationException("Grpc:NotificationService is not configured.");
 
 builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 {
@@ -43,11 +41,7 @@ builder.Services.AddGrpcClient<UserGrpc.UserGrpcClient>(o =>
 });
 builder.Services.AddScoped<GrpcUserClientService>();
 
-builder.Services.AddGrpcClient<NotificationGrpc.NotificationGrpcClient>(o =>
-{
-    o.Address = new Uri(notificationServiceGrpcAddress);
-});
-builder.Services.AddScoped<GrpcNotificationClientService>();
+builder.Services.AddRabbitMqOutbox<ApplicationDbContext>(builder.Configuration);
 
 
 builder.Services.AddControllers();

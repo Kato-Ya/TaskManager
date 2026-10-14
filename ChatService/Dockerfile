@@ -10,6 +10,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ChatService/ChatService.csproj", "ChatService/"]
+COPY ["Common.Auth/Common.Auth.csproj", "Common.Auth/"]
+COPY ["Common.Messaging/Common.Messaging.csproj", "Common.Messaging/"]
+COPY ["TMApi.Contracts/TMApi.Contracts.csproj", "TMApi.Contracts/"]
+COPY NuGet.Config ./
 RUN dotnet restore "./ChatService/./ChatService.csproj"
 COPY . .
 WORKDIR "/src/ChatService"

@@ -33,7 +33,7 @@ public sealed class ChatServiceWebApplicationFactory : WebApplicationFactory<Pro
                     "Host=localhost;Port=5432;Database=tests;Username=tests;Password=tests",
                 ["ConnectionStrings:Redis"] = "localhost:6379",
                 ["Grpc:UserService"] = "http://localhost:5000",
-                ["Grpc:NotificationService"] = "http://localhost:5003"
+                ["RabbitMQ:Enabled"] = "false"
             });
         });
 
