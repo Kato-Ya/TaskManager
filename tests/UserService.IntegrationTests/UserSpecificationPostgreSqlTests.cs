@@ -9,7 +9,7 @@ using UserService.Specifications.UserSpecifications;
 namespace UserService.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class UserSpecificationPostgreSqlTests : IAsyncLifetime
+public class UserSpecificationPostgreSqlTests : IAsyncLifetime
 {
     private readonly PostgreSqlFixture _fixture;
 

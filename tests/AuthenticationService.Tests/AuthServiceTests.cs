@@ -152,7 +152,7 @@ public class AuthServiceTests
         Roles = ["User"]
     };
 
-    private sealed class AuthTestContext
+    private class AuthTestContext
     {
         public AuthTestContext()
         {

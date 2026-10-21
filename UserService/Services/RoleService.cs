@@ -1,9 +1,9 @@
-﻿using UserService.Interfaces;
+﻿using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
 using UserService.Data;
 using UserService.Dto;
 using UserService.Entities;
-using Ardalis.Specification;
+using UserService.Interfaces;
 using UserService.Specifications.RoleSpecifications;
 using UserService.Specifications.UserSpecifications;
 
@@ -16,22 +16,25 @@ public class RoleService : IRoleService
         _repository = repository;
     }
 
-    public async Task<IEnumerable<Roles>> GetAllRoleAsync()
+    public async Task<IEnumerable<RoleDto>> GetAllRoleAsync()
     {
-        return await _repository.ListAsync(new RoleGetAllSpecification());
+        var roles = await _repository.ListAsync(new RoleGetAllSpecification());
+        return roles.Select(ToRoleDto);
     }
 
-    public async Task<Roles?> GetByIdRoleAsync(int roleId)
+    public async Task<RoleDto?> GetByIdRoleAsync(int roleId)
     {
-        return await _repository.FirstOrDefaultAsync(new RoleGetByIdSpecification(roleId));
+        var role = await _repository.FirstOrDefaultAsync(new RoleGetByIdSpecification(roleId));
+        return role == null ? null : ToRoleDto(role);
     }
 
-    public async Task<Roles> CreateRoleAsync(RoleDto roleDto)
+    public async Task<RoleDto> CreateRoleAsync(RoleDto roleDto)
     {
-        return await _repository.AddAsync(new Roles(roleDto));
+        var role = await _repository.AddAsync(new Roles(roleDto));
+        return ToRoleDto(role);
     }
 
-    public async Task<Roles> UpdateRoleAsync(RoleDto roleDto)
+    public async Task<RoleDto> UpdateRoleAsync(RoleDto roleDto)
     {
         var currentRole = await _repository.FirstOrDefaultAsync(new RoleGetByIdSpecification(roleDto.Id));
 
@@ -43,10 +46,9 @@ public class RoleService : IRoleService
         currentRole.Id = roleDto.Id;
         currentRole.Name = roleDto.Name;
         currentRole.Description = roleDto.Description;
-        //currentRole.UserRoles = roleDto.UserRoles;
 
         await _repository.UpdateAsync(currentRole);
-        return currentRole;
+        return ToRoleDto(currentRole);
     }
 
     public async Task<bool> DeleteRoleAsync(int roleId)
@@ -61,4 +63,11 @@ public class RoleService : IRoleService
         await _repository.DeleteAsync(role);
         return true;
     }
+
+    private static RoleDto ToRoleDto(Roles role) => new()
+    {
+        Id = role.Id,
+        Name = role.Name,
+        Description = role.Description
+    };
 }

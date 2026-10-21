@@ -4,7 +4,7 @@ using UserService.Entities;
 
 namespace UserService.Specifications.UserSpecifications;
 
-public sealed class UserSearchSpecification : Specification<Users, UserSearchDto>
+public class UserSearchSpecification : Specification<Users, UserSearchDto>
 {
     public UserSearchSpecification()
     {

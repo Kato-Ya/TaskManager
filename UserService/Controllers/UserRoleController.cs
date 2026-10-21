@@ -34,7 +34,7 @@ public class UserRoleController : ControllerBase
     public async Task<IActionResult> GetUserRoleById(int userRoleId)
     {
         var userRole = await _userRoleService.GetUserRoleByIdAsync(userRoleId);
-        return Ok(userRole);
+        return userRole == null ? NotFound() : Ok(userRole);
     }
 
     [HttpDelete("{id:int}")]
