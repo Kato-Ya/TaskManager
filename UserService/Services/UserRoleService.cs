@@ -22,14 +22,16 @@ public class UserRoleService : IUserRoleService
         _repositoryUser = repositoryUser;
     }
 
-    public async Task<IEnumerable<UserRole>> GetAllUserRoleAsync()
+    public async Task<IEnumerable<UserRoleDto>> GetAllUserRoleAsync()
     {
-        return await _repository.ListAsync(new UserRoleGetAllSpecification());
+        var userRoles = await _repository.ListAsync(new UserRoleGetAllSpecification());
+        return userRoles.Select(ToUserRoleDto);
     }
 
-    public async Task<UserRole?> GetUserRoleByIdAsync(int userRoleId)
+    public async Task<UserRoleDto?> GetUserRoleByIdAsync(int userRoleId)
     {
-        return await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleId));
+        var userRole =  await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleId));
+        return userRole == null ? null: ToUserRoleDto(userRole);
     }
 
     public async Task AssignRolesAsync(int userId, [FromBody] List<int> roleIds)
@@ -70,7 +72,7 @@ public class UserRoleService : IUserRoleService
 
     }
 
-    public async Task<UserRole> UpdateUserRoleAsync(UserRoleDto userRoleDto)
+    public async Task<UserRoleDto> UpdateUserRoleAsync(UserRoleDto userRoleDto)
     {
         var userRole = await _repository.FirstOrDefaultAsync(new UserRoleGetByIdSpecifications(userRoleDto.Id));
 
@@ -83,7 +85,14 @@ public class UserRoleService : IUserRoleService
         userRole.UserId = userRoleDto.UserId;
 
         await _repository.UpdateAsync(userRole);
-        return userRole;
+        return ToUserRoleDto(userRole);
     }
+
+    private static UserRoleDto ToUserRoleDto(UserRole userRole) => new()
+    {
+        Id = userRole.Id,
+        UserId = userRole.UserId,
+        RoleId = userRole.RoleId
+    };
 
 }

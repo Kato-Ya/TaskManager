@@ -73,7 +73,7 @@ public class ChatMessageServiceTests
         return new ClaimsPrincipal(new ClaimsIdentity(claims, "Test"));
     }
 
-    private sealed class RecordingChatService : IChatService
+    private class RecordingChatService : IChatService
     {
         public CreateChatMessageDto? LastMessage { get; private set; }
 
@@ -89,7 +89,7 @@ public class ChatMessageServiceTests
         }
     }
 
-    private sealed class FakeMessageService : IMessageService
+    private class FakeMessageService : IMessageService
     {
         public int? ConversationUserId { get; private set; }
         public int? ConversationOtherUserId { get; private set; }

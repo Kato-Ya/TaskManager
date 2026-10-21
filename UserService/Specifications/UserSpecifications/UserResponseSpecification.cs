@@ -5,7 +5,7 @@ using UserService.Entities;
 
 namespace UserService.Specifications.UserSpecifications;
 
-public sealed class UserResponseSpecification : Specification<Users, UserResponseDto>
+public class UserResponseSpecification : Specification<Users, UserResponseDto>
 {
     private static readonly Expression<Func<Users, UserResponseDto>> Projection = user =>
         new UserResponseDto

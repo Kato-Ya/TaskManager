@@ -10,7 +10,7 @@ using TaskService.Interfaces;
 
 namespace TaskService.IntegrationTests;
 
-public sealed class TaskServiceWebApplicationFactory : WebApplicationFactory<Program>
+public class TaskServiceWebApplicationFactory : WebApplicationFactory<Program>
 {
     public const string JwtKey = "test-key-that-is-at-least-thirty-two-characters-long";
     public const string JwtIssuer = "TMApi.Tests";
@@ -41,7 +41,7 @@ public sealed class TaskServiceWebApplicationFactory : WebApplicationFactory<Pro
         });
     }
 
-    private sealed class FakeTaskService : ITaskService
+    private class FakeTaskService : ITaskService
     {
         private readonly Dictionary<int, string> _statuses = new()
         {
@@ -117,7 +117,7 @@ public sealed class TaskServiceWebApplicationFactory : WebApplicationFactory<Pro
         };
     }
 
-    private sealed class FakeTaskUserService : ITaskUserService
+    private class FakeTaskUserService : ITaskUserService
     {
         public Task<bool> AssignUserAsync(int taskId, int userId) => Task.FromResult(true);
         public Task<bool> DeleteUserAsync(int taskId, int userId) => Task.FromResult(true);

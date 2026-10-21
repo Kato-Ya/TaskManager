@@ -10,7 +10,7 @@ using StackExchange.Redis;
 
 namespace NotificationService.IntegrationTests;
 
-public sealed class NotificationServiceWebApplicationFactory : WebApplicationFactory<Program>
+public class NotificationServiceWebApplicationFactory : WebApplicationFactory<Program>
 {
     public const string JwtKey = "test-key-that-is-at-least-thirty-two-characters-long";
     public const string JwtIssuer = "TMApi.Tests";
@@ -40,7 +40,7 @@ public sealed class NotificationServiceWebApplicationFactory : WebApplicationFac
         });
     }
 
-    private sealed class FakeNotificationService : INotificationService
+    private class FakeNotificationService : INotificationService
     {
         public Task<bool> SendNotificationAsync(int userId, string message, int taskId) =>
             Task.FromResult(true);
@@ -65,7 +65,7 @@ public sealed class NotificationServiceWebApplicationFactory : WebApplicationFac
             ]);
     }
 
-    private sealed class FakeEmailSenderService : IEmailSenderService
+    private class FakeEmailSenderService : IEmailSenderService
     {
         public Task SendEmailAsync(string email, string subject, string htmlMessage) =>
             Task.CompletedTask;

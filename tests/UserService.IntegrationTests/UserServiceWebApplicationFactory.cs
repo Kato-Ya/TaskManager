@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Xml.Linq;
 using UserService.Dto;
 using UserService.Entities;
 using UserService.Interfaces;
 
 namespace UserService.IntegrationTests;
 
-public sealed class UserServiceWebApplicationFactory : WebApplicationFactory<Program>
+public class UserServiceWebApplicationFactory : WebApplicationFactory<Program>
 {
     public const string JwtKey = "test-key-that-is-at-least-thirty-two-characters-long";
     public const string JwtIssuer = "TMApi.Tests";
@@ -43,7 +44,7 @@ public sealed class UserServiceWebApplicationFactory : WebApplicationFactory<Pro
         });
     }
 
-    private sealed class FakeUserService : IUserService
+    private class FakeUserService : IUserService
     {
         public Task<IEnumerable<UserResponseDto>> GetAllUsersAsync()
         {
@@ -105,29 +106,27 @@ public sealed class UserServiceWebApplicationFactory : WebApplicationFactory<Pro
             });
         }
 
-        public Task<Users> CreateUserAsync(CreateUserDto createUserDto) =>
+        public Task<UserResponseDto> CreateUserAsync(CreateUserDto createUserDto) =>
             throw new NotSupportedException();
 
-        public Task<Users> UpdateUserAsync(UserDto userDto) =>
+        public Task<UserResponseDto> UpdateUserAsync(UserDto userDto) =>
             throw new NotSupportedException();
 
         public Task<bool> DeleteUserAsync(int userId) =>
             throw new NotSupportedException();
     }
 
-    private sealed class FakeRoleService : IRoleService
+    private class FakeRoleService : IRoleService
     {
-        public Task<IEnumerable<Roles>> GetAllRoleAsync() =>
-            Task.FromResult<IEnumerable<Roles>>([CreateRole(1, "Admin")]);
+        public Task<IEnumerable<RoleDto>> GetAllRoleAsync() =>
+            Task.FromResult<IEnumerable<RoleDto>>([new RoleDto{Id = 1, Name = "Admin" }]);
 
-        public Task<Roles?> GetByIdRoleAsync(int roleId) =>
-            Task.FromResult<Roles?>(CreateRole(roleId, $"Role-{roleId}"));
+        public Task<RoleDto?> GetByIdRoleAsync(int roleId) =>
+            Task.FromResult<RoleDto?>(new RoleDto { Id = roleId, Name = $"Role-{roleId}" });
 
-        public Task<Roles> CreateRoleAsync(RoleDto roleDto) =>
-            Task.FromResult(CreateRole(10, roleDto.Name, roleDto.Description));
+        public Task<RoleDto> CreateRoleAsync(RoleDto roleDto) => Task.FromResult(roleDto);
 
-        public Task<Roles> UpdateRoleAsync(RoleDto roleDto) =>
-            Task.FromResult(CreateRole(roleDto.Id, roleDto.Name, roleDto.Description));
+        public Task<RoleDto> UpdateRoleAsync(RoleDto roleDto) => Task.FromResult(roleDto);
 
         public Task<bool> DeleteRoleAsync(int roleId) => Task.FromResult(true);
 
@@ -139,28 +138,23 @@ public sealed class UserServiceWebApplicationFactory : WebApplicationFactory<Pro
         };
     }
 
-    private sealed class FakeUserRoleService : IUserRoleService
+    private class FakeUserRoleService : IUserRoleService
     {
-        public Task<IEnumerable<UserRole>> GetAllUserRoleAsync() =>
-            Task.FromResult<IEnumerable<UserRole>>([]);
+        public Task<IEnumerable<UserRoleDto>> GetAllUserRoleAsync() =>
+            Task.FromResult<IEnumerable<UserRoleDto>>([]);
 
-        public Task<UserRole?> GetUserRoleByIdAsync(int id) =>
-            Task.FromResult<UserRole?>(null);
+        public Task<UserRoleDto?> GetUserRoleByIdAsync(int id) =>
+            Task.FromResult<UserRoleDto?>(null);
 
         public Task AssignRolesAsync(int userId, List<int> roleIds) => Task.CompletedTask;
 
         public Task DeleteUserRoleAsync(int id) => Task.CompletedTask;
 
-        public Task<UserRole> UpdateUserRoleAsync(UserRoleDto userRoleDto) =>
-            Task.FromResult(new UserRole
-            {
-                Id = userRoleDto.Id,
-                UserId = userRoleDto.UserId,
-                RoleId = userRoleDto.RoleId
-            });
+        public Task<UserRoleDto> UpdateUserRoleAsync(UserRoleDto userRoleDto) =>
+            Task.FromResult(userRoleDto);
     }
 
-    private sealed class FakeUserSessionService : IUserSessionService
+    private class FakeUserSessionService : IUserSessionService
     {
         public Task SignInUserSessionAsync(int userdId, string? ipAddress, string? userAgent) =>
             Task.CompletedTask;

@@ -10,7 +10,7 @@ using UserService.Services;
 namespace UserService.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class UserServicePersistenceTests : IAsyncLifetime
+public class UserServicePersistenceTests : IAsyncLifetime
 {
     private readonly PostgreSqlFixture _fixture;
 
@@ -303,7 +303,7 @@ public sealed class UserServicePersistenceTests : IAsyncLifetime
     private static string UniqueEmail(string prefix) =>
         $"{prefix}-{Guid.NewGuid():N}@example.test";
 
-    private sealed class FixedPasswordHasher : IPasswordHasher
+    private class FixedPasswordHasher : IPasswordHasher
     {
         public string Hash(string password) => $"hashed:{password}";
 

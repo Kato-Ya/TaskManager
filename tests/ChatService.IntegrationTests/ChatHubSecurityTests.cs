@@ -91,7 +91,7 @@ public class ChatHubSecurityTests
         return new ClaimsPrincipal(new ClaimsIdentity(claims, "Test"));
     }
 
-    private sealed class RecordingChatService : IChatService
+    private class RecordingChatService : IChatService
     {
         public CreateChatMessageDto? LastMessage { get; private set; }
 
@@ -107,7 +107,7 @@ public class ChatHubSecurityTests
         }
     }
 
-    private sealed class TestHubCallerContext : HubCallerContext
+    private class TestHubCallerContext : HubCallerContext
     {
         public TestHubCallerContext(
             string connectionId,
@@ -129,7 +129,7 @@ public class ChatHubSecurityTests
         public override void Abort() { }
     }
 
-    private sealed class TestHttpContextFeature : IHttpContextFeature
+    private class TestHttpContextFeature : IHttpContextFeature
     {
         public TestHttpContextFeature(HttpContext httpContext)
         {

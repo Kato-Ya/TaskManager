@@ -47,7 +47,7 @@ public class UserService : IUserService
             new UserResponseSpecification(userId));
     }
 
-    public async Task<Users> CreateUserAsync(CreateUserDto createUserDto)
+    public async Task<UserResponseDto> CreateUserAsync(CreateUserDto createUserDto)
     {
         string passwordHash = _passwordHasher.Hash(createUserDto.Password);
         var user = new Users
@@ -73,10 +73,10 @@ public class UserService : IUserService
 
         await _userRoleRepository.SaveChangesAsync();
 
-        return user;
+        return (await _repository.FirstOrDefaultAsync(new UserResponseSpecification(user.Id)))!;
     }
 
-    public async Task<Users> UpdateUserAsync(UserDto userDto)
+    public async Task<UserResponseDto> UpdateUserAsync(UserDto userDto)
     {
         var currentUser = await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userDto.Id));
 
@@ -89,20 +89,16 @@ public class UserService : IUserService
         currentUser.Username = userDto.Username;
         currentUser.Email = userDto.Email;
         currentUser.State = userDto.State;
-        //currentUser.PasswordHash = userDto.PasswordHash;
-        //currentUser.CreatedAt = userDto.CreatedAt;
-        //currentUser.UserRoles = userDto.UserRoles;
-        //currentUser.Roles = userDto.Roles;
-
 
         await _repository.UpdateAsync(currentUser);
-        return currentUser;
+
+        return (await _repository.FirstOrDefaultAsync(new UserResponseSpecification(currentUser.Id)))!;
     }
 
     public async Task<bool> DeleteUserAsync(int userId)
     {
         var user= await _repository.FirstOrDefaultAsync(new UserGetByIdSpecification(userId));
-
+        
         if (user == null)
         {
             throw new ArgumentException("User did not found");

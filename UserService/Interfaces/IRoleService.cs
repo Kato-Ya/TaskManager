@@ -5,9 +5,9 @@ using UserService.Dto;
 namespace UserService.Interfaces;
 public interface IRoleService
 {
-    Task<IEnumerable<Roles>> GetAllRoleAsync();
-    Task<Roles?> GetByIdRoleAsync(int roleId);
-    Task<Roles> CreateRoleAsync(RoleDto roleDto);
-    Task<Roles> UpdateRoleAsync(RoleDto roleDto);
+    Task<IEnumerable<RoleDto>> GetAllRoleAsync();
+    Task<RoleDto?> GetByIdRoleAsync(int roleId);
+    Task<RoleDto> CreateRoleAsync(RoleDto roleDto);
+    Task<RoleDto> UpdateRoleAsync(RoleDto roleDto);
     Task<bool> DeleteRoleAsync(int roleId);
 }

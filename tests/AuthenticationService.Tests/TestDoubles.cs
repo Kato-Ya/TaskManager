@@ -6,7 +6,7 @@ using Grpc.Core;
 
 namespace AuthenticationService.Tests;
 
-internal sealed class InMemoryRefreshTokenRepository : IJwtRefreshTokenRepository
+internal class InMemoryRefreshTokenRepository : IJwtRefreshTokenRepository
 {
     private readonly Dictionary<string, RefreshToken> _tokens = new();
 
@@ -31,7 +31,7 @@ internal sealed class InMemoryRefreshTokenRepository : IJwtRefreshTokenRepositor
     public bool Contains(string id) => _tokens.ContainsKey(id);
 }
 
-internal sealed class FakeUserClientService : IUserClientService
+internal class FakeUserClientService : IUserClientService
 {
     private readonly Dictionary<int, UserDto> _usersById = new();
     private readonly Dictionary<string, (UserDto User, string Password)> _usersByName =
@@ -56,7 +56,7 @@ internal sealed class FakeUserClientService : IUserClientService
     }
 }
 
-internal sealed class RecordingUserSessionTracker : IUserSessionTracker
+internal class RecordingUserSessionTracker : IUserSessionTracker
 {
     public List<int> SignedInUsers { get; } = new();
     public List<int> SignedOutUsers { get; } = new();

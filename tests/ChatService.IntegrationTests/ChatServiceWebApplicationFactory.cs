@@ -14,7 +14,7 @@ using StackExchange.Redis;
 
 namespace ChatService.IntegrationTests;
 
-public sealed class ChatServiceWebApplicationFactory : WebApplicationFactory<Program>
+public class ChatServiceWebApplicationFactory : WebApplicationFactory<Program>
 {
     public const string JwtKey = "test-key-that-is-at-least-thirty-two-characters-long";
     public const string JwtIssuer = "TMApi.Tests";
@@ -52,7 +52,7 @@ public sealed class ChatServiceWebApplicationFactory : WebApplicationFactory<Pro
         });
     }
 
-    private sealed class FakeMessageService : IMessageService
+    private class FakeMessageService : IMessageService
     {
         public Task<ChatMessage> SaveMessageAsync(ChatMessage message) =>
             Task.FromResult(message);
@@ -91,7 +91,7 @@ public sealed class ChatServiceWebApplicationFactory : WebApplicationFactory<Pro
         };
     }
 
-    private sealed class FakeChatService : IChatService
+    private class FakeChatService : IChatService
     {
         public Task<ChatMessageDto> SendMessageAsync(CreateChatMessageDto dto) =>
             Task.FromResult(new ChatMessageDto

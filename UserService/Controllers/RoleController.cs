@@ -34,7 +34,7 @@ public class RoleController : ControllerBase
     public async Task<IActionResult> GetRoleById(int roleId)
     {
         var role = await _roleService.GetByIdRoleAsync(roleId);
-        return Ok(role);
+        return role == null ? NotFound() : Ok(role);
     }
 
     [HttpPost]
@@ -73,6 +73,6 @@ public class RoleController : ControllerBase
     public async Task<IActionResult> DeleteRole(int id)
     {
         var deletedRole = await _roleService.DeleteRoleAsync(id);
-        return Ok(deletedRole);
+        return deletedRole ? NoContent() : NotFound();
     }
 }

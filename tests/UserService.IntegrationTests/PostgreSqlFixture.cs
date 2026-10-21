@@ -4,7 +4,7 @@ using UserService.Data;
 
 namespace UserService.IntegrationTests;
 
-public sealed class PostgreSqlFixture : IAsyncLifetime
+public class PostgreSqlFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:15-alpine")
         .WithDatabase("tmapi_tests")
@@ -27,7 +27,7 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
 }
 
 [CollectionDefinition(Name)]
-public sealed class PostgreSqlCollection : ICollectionFixture<PostgreSqlFixture>
+public class PostgreSqlCollection : ICollectionFixture<PostgreSqlFixture>
 {
     public const string Name = "UserService PostgreSQL";
 }

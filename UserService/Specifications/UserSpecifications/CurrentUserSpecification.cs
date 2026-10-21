@@ -4,7 +4,7 @@ using UserService.Entities;
 
 namespace UserService.Specifications.UserSpecifications;
 
-public sealed class CurrentUserSpecification : Specification<Users, CurrentUserDto>
+public class CurrentUserSpecification : Specification<Users, CurrentUserDto>
 {
     public CurrentUserSpecification(int userId)
     {
