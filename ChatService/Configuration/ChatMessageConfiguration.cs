@@ -9,9 +9,9 @@ public class ChatMessageConfiguration : IEntityTypeConfiguration<ChatMessage>
     {
         builder.ToTable("chat_message");
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id).HasName("chat_message_pkey");
 
-        builder.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
+        builder.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd().UseSerialColumn();
         builder.Property(x => x.Room).HasColumnName("room").HasMaxLength(50).HasDefaultValue("global").IsRequired();
         builder.Property(x => x.SenderId).HasColumnName("user_id").IsRequired();
         builder.Property(x => x.ReceiverId).HasColumnName("receiver_id").IsRequired(false);

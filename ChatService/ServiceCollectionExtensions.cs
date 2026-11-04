@@ -13,6 +13,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IChatMessageService, ChatMessageService>();
         services.AddSingleton<IConnectionManager, ConnectionManager.ConnectionManager>();
+        services.AddScoped<IRoomAccessService, RoomAccessService>();
         //services.AddScoped(IChatService, Services.ChatService);
 
         services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepositoryMessage<>));
