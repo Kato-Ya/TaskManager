@@ -13,12 +13,16 @@ public class ChatHub : Hub
     private readonly IChatService _chatService;
     private readonly IConnectionManager _connectionManager;
 
+    private readonly IRoomAccessService _roomAccessService;
+
     public ChatHub(
         IChatService chatService,
-        IConnectionManager connectionManager)
+        IConnectionManager connectionManager,
+            IRoomAccessService roomAccessService)
     {
         _chatService = chatService;
         _connectionManager = connectionManager;
+        _roomAccessService = roomAccessService;
     }
 
     public async Task SendMessage(CreateChatMessageDto createChatMessageDto)
@@ -50,9 +54,18 @@ public class ChatHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    public Task JoinRoom(string room)
+    public async Task JoinRoom(string roomName)
     {
-        return Groups.AddToGroupAsync(Context.ConnectionId, room);
+        int userId = GetCurrentUserId() ?? throw new HubException("User is not authenticated");
+
+        bool canAcess = await _roomAccessService.CanAccessRoomAsync(roomName, userId);
+
+        if (!canAcess)
+        {
+            throw new HubException("Access to room denied");
+        }
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
     }
 
     public Task LeaveRoom(string room)
