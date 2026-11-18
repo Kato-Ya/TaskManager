@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using ChatService.Dto;
 using ChatService.Entities;
+using ChatService.Exceptions;
 using ChatService.Hubs;
 using ChatService.Interfaces;
 using Microsoft.AspNetCore.SignalR;
@@ -18,6 +19,7 @@ public class ChatService : IChatService
     private readonly GrpcNotificationClientService _grpcNotificationClient;
     private readonly IHubContext<ChatHub> _hubContext;
     private readonly IConnectionManager _connectionManager;
+    private readonly IRoomAccessService _roomAccessService;
 
 
     public ChatService(
@@ -25,17 +27,31 @@ public class ChatService : IChatService
         GrpcUserClientService grpcUserClient,
         GrpcNotificationClientService grpcNotificationClient,
         IHubContext<ChatHub> hubContext, 
-        IConnectionManager connectionManager)
+        IConnectionManager connectionManager,
+        IRoomAccessService roomAccessService)
     {
         _messageService = messageService;
         _grpcUserClient = grpcUserClient;
         _grpcNotificationClient = grpcNotificationClient;
         _hubContext = hubContext;
         _connectionManager = connectionManager;
+        _roomAccessService = roomAccessService;
     }
 
     public async Task<ChatMessageDto> SendMessageAsync(CreateChatMessageDto createChatMessageDto)
     {
+        var roomName = createChatMessageDto.Room ?? "global";
+
+        if (!createChatMessageDto.ReceiverId.HasValue)
+        {
+            var hasAccess = await _roomAccessService.CanAccessRoomAsync(roomName, createChatMessageDto.SenderId);
+            if (!hasAccess)
+            {
+                throw new RoomAccessDeniedException(
+                    $"Access to room '{roomName}' is denied for user {createChatMessageDto.SenderId}.");
+            }
+        }
+
         var user = await _grpcUserClient.GetUserByIdAsync(createChatMessageDto.SenderId);
         if (user == null)
         {
@@ -65,19 +81,19 @@ public class ChatService : IChatService
             SentAt = savedMessage.SentAt
         };
 
-        //await _hubContext.Clients.Group(chatMessageDtoResult.Room!).SendAsync("ReceiveMessage", chatMessageDtoResult);
+            //await _hubContext.Clients.Group(chatMessageDtoResult.Room!).SendAsync("ReceiveMessage", chatMessageDtoResult);
 
-        //if (savedMessage.ReceiverId.HasValue)
-        //{
+            //if (savedMessage.ReceiverId.HasValue)
+            //{
 
-        //    await _grpcNotificationClient.SendMessageNotificationAsync(
-        //        savedMessage.ReceiverId.Value,  
-        //        $"Вам пришло сообщение: {savedMessage.Text}",
-        //        savedMessage.Id
-        //    );
-        //}
+            //    await _grpcNotificationClient.SendMessageNotificationAsync(
+            //        savedMessage.ReceiverId.Value,  
+            //        $"Вам пришло сообщение: {savedMessage.Text}",
+            //        savedMessage.Id
+            //    );
+            //}
 
-        if (savedMessage.ReceiverId.HasValue)
+            if (savedMessage.ReceiverId.HasValue)
         {
             // personal messages
             await SendToUserConnectionsAsync(savedMessage.SenderId, chatMessageDtoResult);

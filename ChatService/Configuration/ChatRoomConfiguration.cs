@@ -14,5 +14,6 @@ public class ChatRoomConfiguration : IEntityTypeConfiguration<ChatRoom>
         builder.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
         builder.HasIndex(x => x.RoomName).IsUnique();
         builder.Property(x => x.RoomName).HasColumnName("room_name").HasMaxLength(50).IsRequired();
+        builder.Property(x => x.OwnerId).HasColumnName("owner_id");
     }
 }

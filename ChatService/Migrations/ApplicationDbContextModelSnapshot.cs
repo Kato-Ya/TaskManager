@@ -80,6 +80,10 @@ namespace ChatService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("owner_id");
+
                     b.Property<string>("RoomName")
                         .IsRequired()
                         .HasMaxLength(50)

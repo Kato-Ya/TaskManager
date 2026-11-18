@@ -48,7 +48,7 @@ public class ChatHttpAuthorizationTests : IClassFixture<ChatServiceWebApplicatio
             $"/api/chat/room/global?access_token={token}");
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-    }
+    }   
 
     [Fact]
     public async Task SendMessage_ReturnsUnauthorizedWithoutToken()
