@@ -1,6 +1,7 @@
 ﻿using ChatService.Entities;
 using ChatService.Interfaces;
 using ChatService.Dto;
+using ChatService.Exceptions;
 using Microsoft.AspNetCore.SignalR;
 using ChatService.ConnectionManager;
 using Microsoft.AspNetCore.Authorization;
@@ -34,7 +35,14 @@ public class ChatHub : Hub
         }
 
         createChatMessageDto.SenderId = userId.Value;
-        await _chatService.SendMessageAsync(createChatMessageDto);
+        try
+        {
+            await _chatService.SendMessageAsync(createChatMessageDto);
+        }
+        catch (RoomAccessDeniedException)
+        {
+            throw new HubException("Access to room denied");
+        }
     }
 
     public override async Task OnConnectedAsync()

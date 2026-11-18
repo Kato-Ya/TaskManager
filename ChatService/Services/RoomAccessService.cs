@@ -1,7 +1,9 @@
 ﻿using Ardalis.Specification;
 using ChatService.Entities;
+using ChatService.Dto;
 using ChatService.Interfaces;
 using ChatService.Specifications;
+using Common.Auth;
 
 namespace ChatService.Services;
 public class RoomAccessService : IRoomAccessService
@@ -22,6 +24,15 @@ public class RoomAccessService : IRoomAccessService
 
     public async Task<bool> CanAccessRoomAsync(string roomName, int userId)
     {
+        if (string.IsNullOrWhiteSpace(roomName))
+        {
+            return false;
+        }
+
+        if (roomName == "global")
+        {
+            return true;
+        }
         return await _repositoryChatRoom.AnyAsync(new RoomAccessSpecification(roomName, userId));
     }
 }
